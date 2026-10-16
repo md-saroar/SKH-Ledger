@@ -1,0 +1,217 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>SKH Ledger — Sign In / Sign Up</title>
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
+  <link rel="stylesheet" href="signup_signin.css">
+</head>
+<body>
+
+  <div class="container active" id="container">
+
+    <!-- Sign Up Form -->
+    <div class="form-container sign-up">
+      <form id="signupForm">
+        <h1>Create Account</h1>
+
+        <div class="input-box">
+          <input type="text" id="signupName" placeholder="Username" required>
+          <i class="fa-solid fa-user"></i>
+        </div>
+
+        <div class="input-box">
+          <input type="email" id="signupEmail" placeholder="Email" required>
+          <i class="fa-solid fa-envelope"></i>
+        </div>
+
+        <div class="input-box">
+          <input type="password" id="signupPassword" placeholder="Password" required>
+          <i class="fa-solid fa-eye-slash" id="toggleSignupPassword" onclick="togglePassword('signupPassword', 'toggleSignupPassword')" title="Show/Hide Password"></i>
+        </div>
+
+        <button type="submit" class="btn primary-btn">Sign Up</button>
+        <div class="error-msg" id="signupError"></div>
+
+        <p class="social-text">or sign up with social platforms</p>
+        <div class="social-icons">
+          <a href="#" onclick="socialLogin('Google', event)"><i class="fa-brands fa-google" title="Sign in with Google"></i></a>
+          <a href="#" onclick="socialLogin('Facebook', event)"><i class="fa-brands fa-facebook-f" title="Sign in with Facebook"></i></a>
+          <a href="#" onclick="socialLogin('GitHub', event)"><i class="fa-brands fa-github" title="Sign in with GitHub"></i></a>
+          <a href="#" onclick="socialLogin('LinkedIn', event)"><i class="fa-brands fa-linkedin-in" title="Sign in with LinkedIn"></i></a>
+        </div>
+
+        <button type="button" class="mobile-toggle" onclick="toggleMobile()">Already have an account? Sign In</button>
+      </form>
+    </div>
+
+    <!-- Sign In Form -->
+    <div class="form-container sign-in">
+      <form id="signinForm">
+        <h1>Sign In</h1>
+
+        <div class="input-box">
+          <input type="text" id="signinName" placeholder="Username or Email" required>
+          <i class="fa-solid fa-user"></i>
+        </div>
+
+        <div class="input-box">
+          <input type="password" id="signinPassword" placeholder="Password" required>
+          <i class="fa-solid fa-eye-slash" id="toggleSigninPassword" onclick="togglePassword('signinPassword', 'toggleSigninPassword')" title="Show/Hide Password"></i>
+        </div>
+
+        <button type="submit" class="btn primary-btn">Sign In</button>
+        <div class="error-msg" id="signinError"></div>
+
+        <p class="social-text">or sign in with social platforms</p>
+        <div class="social-icons">
+          <a href="#" onclick="socialLogin('Google', event)"><i class="fa-brands fa-google" title="Sign in with Google"></i></a>
+          <a href="#" onclick="socialLogin('Facebook', event)"><i class="fa-brands fa-facebook-f" title="Sign in with Facebook"></i></a>
+          <a href="#" onclick="socialLogin('GitHub', event)"><i class="fa-brands fa-github" title="Sign in with GitHub"></i></a>
+          <a href="#" onclick="socialLogin('LinkedIn', event)"><i class="fa-brands fa-linkedin-in" title="Sign in with LinkedIn"></i></a>
+        </div>
+
+        <button type="button" class="mobile-toggle" onclick="toggleMobile()">Don't have an account? Sign Up</button>
+      </form>
+    </div>
+
+    <!-- Toggle Overlay -->
+    <div class="toggle-container">
+      <div class="toggle">
+        <div class="toggle-panel toggle-left">
+          <h1>Welcome Back!</h1>
+          <p>Already have an account? Sign in to continue your ledger.</p>
+          <button type="button" class="btn outline-btn" id="goToSignIn">Sign In</button>
+        </div>
+        <div class="toggle-panel toggle-right">
+          <h1>Hello, Friend!</h1>
+          <p>Create an account to start tracking your expenses.</p>
+          <button type="button" class="btn outline-btn" id="goToSignUp">Sign Up</button>
+        </div>
+      </div>
+    </div>
+
+  </div>
+
+  <script>
+    const container = document.getElementById("container");
+
+    // Toggle overlay buttons — renamed IDs to avoid conflict with form buttons
+    document.getElementById("goToSignUp").addEventListener("click", () => container.classList.add("active"));
+    document.getElementById("goToSignIn").addEventListener("click", () => container.classList.remove("active"));
+
+    /* ---------- Password Show / Hide Toggle ---------- */
+    function togglePassword(fieldId, iconId) {
+      const field = document.getElementById(fieldId);
+      const icon = document.getElementById(iconId);
+      
+      if (field.type === "password") {
+        field.type = "text";
+        icon.classList.remove("fa-eye-slash");
+        icon.classList.add("fa-eye");
+      } else {
+        field.type = "password";
+        icon.classList.remove("fa-eye");
+        icon.classList.add("fa-eye-slash");
+      }
+    }
+
+    function toggleMobile() {
+      container.classList.toggle("active");
+    }
+
+    const USERS_KEY = "skh_users";
+    const SESSION_KEY = "skh_session";
+
+    function getUsers() {
+      return JSON.parse(localStorage.getItem(USERS_KEY) || "[]");
+    }
+    function saveUsers(users) {
+      localStorage.setItem(USERS_KEY, JSON.stringify(users));
+    }
+
+    /* ---------- Sign Up ---------- */
+    document.getElementById("signupForm").addEventListener("submit", e => {
+      e.preventDefault();
+      const name = document.getElementById("signupName").value.trim();
+      const email = document.getElementById("signupEmail").value.trim();
+      const password = document.getElementById("signupPassword").value;
+      const errEl = document.getElementById("signupError");
+
+      if (!name || !email || !password) {
+        errEl.textContent = "Please fill in all fields.";
+        errEl.classList.add("show");
+        return;
+      }
+      if (password.length < 4) {
+        errEl.textContent = "Password must be at least 4 characters.";
+        errEl.classList.add("show");
+        return;
+      }
+
+      const users = getUsers();
+      if (users.some(u => u.name.toLowerCase() === name.toLowerCase())) {
+        errEl.textContent = "Username already taken.";
+        errEl.classList.add("show");
+        return;
+      }
+      if (users.some(u => u.email.toLowerCase() === email.toLowerCase())) {
+        errEl.textContent = "Email already registered.";
+        errEl.classList.add("show");
+        return;
+      }
+
+      users.push({ name, email, password });
+      saveUsers(users);
+
+      errEl.classList.remove("show");
+      alert("Account created! Please sign in.");
+      container.classList.remove("active");
+      document.getElementById("signinName").value = name;
+      document.getElementById("signinPassword").value = "";
+    });
+
+    /* ---------- Sign In ---------- */
+    document.getElementById("signinForm").addEventListener("submit", e => {
+      e.preventDefault();
+      const login = document.getElementById("signinName").value.trim();
+      const password = document.getElementById("signinPassword").value;
+      const errEl = document.getElementById("signinError");
+
+      const users = getUsers();
+      const user = users.find(u =>
+        (u.name.toLowerCase() === login.toLowerCase() ||
+         u.email.toLowerCase() === login.toLowerCase()) &&
+        u.password === password
+      );
+
+      if (!user) {
+        errEl.textContent = "Invalid username or password.";
+        errEl.classList.add("show");
+        return;
+      }
+
+      errEl.classList.remove("show");
+      localStorage.setItem(SESSION_KEY, JSON.stringify({ name: user.name, email: user.email }));
+      window.location.href = "index.html";
+    });
+
+    /* ---------- Social Media Login Handler ---------- */
+    function socialLogin(provider, event) {
+      if (event) event.preventDefault();
+      
+      // Create a simulated user profile based on the chosen social provider
+      const name = `${provider} User`;
+      const email = `user@${provider.toLowerCase().replace(/\s+/g, '')}.com`;
+      
+      // Save session data
+      localStorage.setItem(SESSION_KEY, JSON.stringify({ name, email }));
+      
+      // Redirect to the main index dashboard
+      window.location.href = "index.html";
+    }
+  </script>
+</body>
+</html>

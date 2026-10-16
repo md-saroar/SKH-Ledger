@@ -1,0 +1,612 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <title>SKH Ledger — Personal Expenses</title>
+  <link rel="stylesheet" href="index.css">
+  <link
+    href="https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,400;14..32,500;14..32,600;14..32,700;14..32,800&display=swap"
+    rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
+</head>
+
+<body>
+
+  <header class="header">
+    <div class="container header-content">
+      <div class="brand">
+        <div class="logo-icon">
+          <span class="logo-text">SKH</span>
+        </div>
+        <div>
+          <h1>SKH Ledger</h1>
+          <p class="muted">Created for Saroar Khan</p>
+        </div>
+      </div>
+      <div class="header-actions">
+        <div class="user-menu-wrap">
+          <button type="button" class="btn secondary user-btn" id="userBtn" onclick="toggleUserMenu(event)"
+            title="Account">
+            <span id="userInitial">U</span>
+          </button>
+          <div class="user-dropdown" id="userDropdown">
+            <div class="user-info">
+              <div class="user-avatar" id="userAvatarInitial">U</div>
+              <div>
+                <strong id="userNameLabel">User</strong>
+                <span id="userEmailLabel" class="user-email">user@example.com</span>
+              </div>
+            </div>
+            <button type="button" class="user-logout" onclick="logout()">
+              <i class="fa-solid fa-right-from-bracket"></i> Sign Out
+            </button>
+          </div>
+        </div>
+
+        <button type="button" class="btn secondary theme-toggle" id="themeToggle" onclick="toggleTheme()"
+          title="Toggle theme">
+          <svg class="sun-icon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+            stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+            <circle cx="12" cy="12" r="4" />
+            <path
+              d="M12 2v2M12 20v2M4.93 4.93l1.41 1.41M17.66 17.66l1.41 1.41M2 12h2M20 12h2M6.34 17.66l-1.41 1.41M19.07 4.93l-1.41 1.41" />
+          </svg>
+          <svg class="moon-icon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+            stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z" />
+          </svg>
+        </button>
+
+        <button type="button" class="btn secondary" onclick="exportCSV()">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4" />
+            <polyline points="7 10 12 15 17 10" />
+            <line x1="12" y1="15" x2="12" y2="3" />
+          </svg>
+          Export
+        </button>
+      </div>
+    </div>
+  </header>
+
+  <main class="container">
+    <section class="cards-wrapper">
+      <div class="cards">
+        <div class="card">
+          <span class="label">Today's Spend</span>
+          <div class="amount" id="todayTotal">0</div>
+        </div>
+        <div class="card">
+          <span class="label">This Week</span>
+          <div class="amount" id="weekTotal">0</div>
+        </div>
+        <div class="card">
+          <span class="label">This Month</span>
+          <div class="amount" id="monthTotal">0</div>
+        </div>
+      </div>
+    </section>
+
+    <div class="grid">
+      <section class="panel">
+        <h2>Add Expense</h2>
+        <form id="expenseForm">
+          <div class="form-group">
+            <label for="date">Date <span class="format-hint">(DD/MM/YYYY)</span></label>
+            <div class="date-input-wrap">
+              <input id="date" type="date" required>
+              <span class="date-icon">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2">
+                  <rect x="3" y="4" width="18" height="18" rx="3" />
+                  <line x1="16" y1="2" x2="16" y2="6" />
+                  <line x1="8" y1="2" x2="8" y2="6" />
+                  <line x1="3" y1="10" x2="21" y2="10" />
+                </svg>
+              </span>
+            </div>
+          </div>
+
+          <div class="form-group">
+            <label for="amount">Amount ()</label>
+            <input id="amount" type="number" min="0" step="0.01" placeholder="e.g. 150" required>
+          </div>
+
+          <div class="form-group">
+            <label for="item">What did you buy?</label>
+            <input id="item" type="text" placeholder="e.g. Lunch with friends" required>
+          </div>
+
+          <div class="form-group">
+            <label for="category">Category</label>
+            <div class="custom-select-wrap" data-select="category">
+              <button type="button" class="custom-select-btn" onclick="toggleCustomSelect(event, 'category')">
+                <span class="custom-select-label" id="categoryLabel">Grocery</span>
+                <svg class="chevron" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                  stroke-width="2.5">
+                  <path d="m6 9 6 6 6-6" />
+                </svg>
+              </button>
+              <div class="custom-select-dropdown" id="categoryDropdown">
+                <div class="custom-select-list" id="categoryList"></div>
+              </div>
+              <input type="hidden" id="category" value="Grocery">
+            </div>
+          </div>
+
+          <div class="form-group">
+            <label for="place">Where did you buy it? <span class="muted">(Optional)</span></label>
+            <input id="place" type="text" placeholder="e.g. Tong Store">
+          </div>
+
+          <button type="submit" class="btn primary">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+              <line x1="12" y1="5" x2="12" y2="19" />
+              <line x1="5" y1="12" x2="19" y2="12" />
+            </svg>
+            Add Expense
+          </button>
+        </form>
+      </section>
+
+      <div class="column">
+        <section class="panel">
+          <div class="panel-header">
+            <h2>Expense History</h2>
+            <span id="itemCount" class="muted">0 items</span>
+          </div>
+          <div class="filter-row">
+            <input id="search" placeholder="🔍 Search item or place...">
+
+            <div class="custom-select-wrap" data-select="filter">
+              <button type="button" class="custom-select-btn" onclick="toggleCustomSelect(event, 'filter')">
+                <span class="custom-select-label" id="filterLabel">All Categories</span>
+                <svg class="chevron" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                  stroke-width="2.5">
+                  <path d="m6 9 6 6 6-6" />
+                </svg>
+              </button>
+              <div class="custom-select-dropdown" id="filterDropdown">
+                <div class="custom-select-list" id="filterList"></div>
+              </div>
+              <input type="hidden" id="filter" value="All">
+            </div>
+
+            <div class="custom-select-wrap month-picker-wrap" data-select="month">
+              <button type="button" class="custom-select-btn month-btn" onclick="toggleCustomSelect(event, 'month')">
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2">
+                  <rect x="3" y="4" width="18" height="18" rx="3" />
+                  <line x1="16" y1="2" x2="16" y2="6" />
+                  <line x1="8" y1="2" x2="8" y2="6" />
+                  <line x1="3" y1="10" x2="21" y2="10" />
+                </svg>
+                <span class="custom-select-label" id="monthBtnLabel">All Months</span>
+                <svg class="chevron" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                  stroke-width="2.5">
+                  <path d="m6 9 6 6 6-6" />
+                </svg>
+              </button>
+              <div class="custom-select-dropdown" id="monthDropdown">
+                <div class="custom-select-header">
+                  <span>Filter by Month</span>
+                  <button type="button" class="custom-clear-btn" onclick="clearMonth(event)">Clear</button>
+                </div>
+                <div class="custom-select-list" id="monthList"></div>
+              </div>
+            </div>
+          </div>
+          <div class="month-summary" id="monthSummary"></div>
+          <div id="history" class="table-responsive"></div>
+        </section>
+
+        <section class="panel report-panel">
+          <h2>Monthly Category Breakdown</h2>
+          <div id="report"></div>
+        </section>
+      </div>
+    </div>
+  </main>
+
+  <footer class="footer">
+    <div class="container footer-content">
+      <div class="footer-brand">
+        <span class="footer-logo">SKH Ledger</span>
+        <p>Designed by <strong>Saroar Khan</strong></p>
+      </div>
+      <p class="copyright">&copy; 2026 Saroar Khan</p>
+    </div>
+  </footer>
+
+  <script>
+    /* ---------- Auth Guard (must run first) ---------- */
+    const SESSION_KEY = "skh_session";
+    (function guard() {
+      const session = localStorage.getItem(SESSION_KEY);
+      if (!session) {
+        window.location.replace("login.html");
+      }
+    })();
+
+    function toggleUserMenu(e) {
+      e.stopPropagation();
+      document.getElementById("userDropdown").classList.toggle("open");
+    }
+    function logout() {
+      localStorage.removeItem(SESSION_KEY);
+      window.location.replace("login.html");
+    }
+    document.addEventListener("click", e => {
+      if (!e.target.closest(".user-menu-wrap")) {
+        const dd = document.getElementById("userDropdown");
+        if (dd) dd.classList.remove("open");
+      }
+    });
+
+    const KEY = "personal_expense";
+    const THEME_KEY = "skh_theme";
+    let expenses = JSON.parse(localStorage.getItem(KEY) || "[]");
+    let selectedMonth = "";
+    const $ = id => document.getElementById(id);
+    $("date").value = new Date().toISOString().slice(0, 10);
+
+    const CATEGORIES = ["Grocery", "Food", "Transport", "Shopping", "Education", "Bills", "Entertainment", "Others"];
+
+    /* ---------- Theme ---------- */
+    function applyTheme(theme) {
+      document.documentElement.setAttribute("data-theme", theme);
+      localStorage.setItem(THEME_KEY, theme);
+    }
+    function toggleTheme() {
+      const current = document.documentElement.getAttribute("data-theme") === "dark" ? "light" : "dark";
+      applyTheme(current);
+    }
+    (function initTheme() {
+      const saved = localStorage.getItem(THEME_KEY);
+      if (saved) applyTheme(saved);
+      else if (window.matchMedia && window.matchMedia("(prefers-color-scheme: dark)").matches) applyTheme("dark");
+      else applyTheme("light");
+    })();
+
+    function money(n) {
+      return "৳" + Number(n).toLocaleString("en-BD", { maximumFractionDigits: 2 });
+    }
+
+    function formatDateDisplay(dateStr) {
+      if (!dateStr) return "—";
+      const [year, month, day] = dateStr.split("-");
+      return `${day}/${month}/${year}`;
+    }
+
+    function monthLabel(ym) {
+      if (!ym) return "All Months";
+      const [y, m] = ym.split("-");
+      const d = new Date(Number(y), Number(m) - 1, 1);
+      return d.toLocaleString("en-US", { month: "long", year: "numeric" });
+    }
+
+    function save() {
+      localStorage.setItem(KEY, JSON.stringify(expenses));
+      render();
+    }
+
+    function dayStart(d) {
+      let x = new Date(d);
+      x.setHours(0, 0, 0, 0);
+      return x;
+    }
+
+    function isToday(d) {
+      return d === new Date().toISOString().slice(0, 10);
+    }
+
+    function isThisWeek(d) {
+      const x = dayStart(d), now = dayStart(new Date().toISOString().slice(0, 10));
+      const diff = (now - x) / 86400000;
+      return diff >= 0 && diff < 7;
+    }
+
+    function isThisMonth(d) {
+      return d.slice(0, 7) === new Date().toISOString().slice(0, 7);
+    }
+
+    function getBadgeClass(cat) {
+      const map = {
+        Food: 'badge-food',
+        Transport: 'badge-transport',
+        Shopping: 'badge-shopping',
+        Education: 'badge-education',
+        Bills: 'badge-bills',
+        Entertainment: 'badge-entertainment',
+        Others: 'badge-others',
+        Grocery: 'badge-grocery'
+      };
+      return map[cat] || 'badge-others';
+    }
+
+    /* ---------- Custom Select ---------- */
+    function buildCategoryList() {
+      const listEl = $("categoryList");
+      listEl.innerHTML = CATEGORIES.map(c => {
+        const active = $("category").value === c ? "active" : "";
+        return `<div class="custom-select-item ${active}" onclick="selectCategory('${c}')">
+          <span>${c}</span>
+          ${active ? '<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><polyline points="20 6 9 17 4 12"/></svg>' : ''}
+        </div>`;
+      }).join("");
+    }
+
+    function selectCategory(c) {
+      $("category").value = c;
+      $("categoryLabel").textContent = c;
+      closeAllCustomSelects();
+      buildCategoryList();
+    }
+
+    function buildFilterList() {
+      const listEl = $("filterList");
+      const allActive = $("filter").value === "All";
+      let html = `<div class="custom-select-item ${allActive ? 'active' : ''}" onclick="selectFilter('All')">
+        <span>All Categories</span>
+        ${allActive ? '<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><polyline points="20 6 9 17 4 12"/></svg>' : ''}
+      </div>`;
+      html += CATEGORIES.map(c => {
+        const active = $("filter").value === c ? "active" : "";
+        return `<div class="custom-select-item ${active}" onclick="selectFilter('${c}')">
+          <span>${c}</span>
+          ${active ? '<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><polyline points="20 6 9 17 4 12"/></svg>' : ''}
+        </div>`;
+      }).join("");
+      listEl.innerHTML = html;
+    }
+
+    function selectFilter(v) {
+      $("filter").value = v;
+      $("filterLabel").textContent = v === "All" ? "All Categories" : v;
+      closeAllCustomSelects();
+      buildFilterList();
+      render();
+    }
+
+    function buildMonthList() {
+      const months = new Set();
+      expenses.forEach(x => months.add(x.date.slice(0, 7)));
+      const sorted = [...months].sort((a, b) => b.localeCompare(a));
+      const listEl = $("monthList");
+      listEl.innerHTML = `
+        <div class="custom-select-item ${!selectedMonth ? 'active' : ''}" onclick="selectMonth('')">
+          <span>All Months</span>
+          <span class="custom-select-count">${expenses.length}</span>
+        </div>
+      ` + sorted.map(m => {
+        const count = expenses.filter(x => x.date.slice(0, 7) === m).length;
+        const active = selectedMonth === m ? "active" : "";
+        return `<div class="custom-select-item ${active}" onclick="selectMonth('${m}')">
+          <span>${monthLabel(m)}</span>
+          <span class="custom-select-count">${count}</span>
+        </div>`;
+      }).join("");
+    }
+
+    function selectMonth(ym) {
+      selectedMonth = ym;
+      $("monthBtnLabel").textContent = monthLabel(ym);
+      closeAllCustomSelects();
+      render();
+    }
+
+    function clearMonth(e) {
+      e.stopPropagation();
+      selectMonth("");
+    }
+
+    function toggleCustomSelect(e, name) {
+      e.stopPropagation();
+      const dd = document.getElementById(name + "Dropdown");
+      const wrap = dd.closest(".custom-select-wrap");
+      const isOpen = dd.classList.contains("open");
+
+      // Close all first
+      closeAllCustomSelects();
+
+      if (!isOpen) {
+        // Build the appropriate list
+        if (name === "category") buildCategoryList();
+        if (name === "filter") buildFilterList();
+        if (name === "month") buildMonthList();
+
+        // Open dropdown
+        dd.classList.add("open");
+        wrap.classList.add("open");
+
+        // Ensure dropdown stays within viewport
+        positionDropdown(dd);
+      }
+    }
+
+    function positionDropdown(dd) {
+      // Reset any transform origin
+      dd.style.transformOrigin = "top center";
+
+      // Use requestAnimationFrame to ensure DOM is updated
+      requestAnimationFrame(() => {
+        const rect = dd.getBoundingClientRect();
+        const viewportHeight = window.innerHeight;
+
+        // If dropdown extends below viewport, open upward
+        if (rect.bottom > viewportHeight - 20) {
+          dd.style.transformOrigin = "bottom center";
+          dd.style.top = "auto";
+          dd.style.bottom = "calc(100% + 8px)";
+        } else {
+          dd.style.top = "calc(100% + 8px)";
+          dd.style.bottom = "auto";
+        }
+      });
+    }
+
+    function closeAllCustomSelects() {
+      document.querySelectorAll(".custom-select-dropdown.open").forEach(el => {
+        el.classList.remove("open");
+        el.style.top = "";
+        el.style.bottom = "";
+        el.style.transformOrigin = "";
+      });
+      document.querySelectorAll(".custom-select-wrap.open").forEach(el => el.classList.remove("open"));
+    }
+
+    document.addEventListener("click", e => {
+      if (!e.target.closest(".custom-select-wrap")) closeAllCustomSelects();
+    });
+
+    // Close on escape key
+    document.addEventListener("keydown", e => {
+      if (e.key === "Escape") closeAllCustomSelects();
+    });
+
+    /* ---------- Form Submit ---------- */
+    $("expenseForm").onsubmit = e => {
+      e.preventDefault();
+      expenses.push({
+        id: Date.now(),
+        date: $("date").value,
+        amount: Number($("amount").value),
+        item: $("item").value.trim(),
+        category: $("category").value,
+        place: $("place").value.trim()
+      });
+      e.target.reset();
+      $("date").value = new Date().toISOString().slice(0, 10);
+      $("category").value = "Grocery";
+      $("categoryLabel").textContent = "Grocery";
+      buildCategoryList();
+      save();
+    };
+
+    /* ---------- Render ---------- */
+    function render() {
+      const sum = a => a.reduce((s, x) => s + x.amount, 0);
+      $("todayTotal").textContent = money(sum(expenses.filter(x => isToday(x.date))));
+      $("weekTotal").textContent = money(sum(expenses.filter(x => isThisWeek(x.date))));
+      $("monthTotal").textContent = money(sum(expenses.filter(x => isThisMonth(x.date))));
+
+      const q = $("search").value.toLowerCase(), f = $("filter").value;
+      let list = expenses.filter(x => {
+        if (selectedMonth && x.date.slice(0, 7) !== selectedMonth) return false;
+        if (f !== "All" && x.category !== f) return false;
+        if (q && !(x.item.toLowerCase().includes(q) || (x.place || "").toLowerCase().includes(q))) return false;
+        return true;
+      }).sort((a, b) => b.date.localeCompare(a.date) || b.id - a.id);
+
+      $("itemCount").textContent = `${list.length} item${list.length === 1 ? '' : 's'}`;
+
+      if (selectedMonth) {
+        const allMonthTotal = sum(expenses.filter(x => x.date.slice(0, 7) === selectedMonth));
+        $("monthSummary").innerHTML = `
+          <div class="month-summary-inner">
+            <div class="month-summary-text">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><rect x="3" y="4" width="18" height="18" rx="3"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
+              <span><strong>${monthLabel(selectedMonth)}</strong> total spend</span>
+            </div>
+            <div class="month-summary-amount">${money(allMonthTotal)}</div>
+          </div>
+        `;
+        $("monthSummary").classList.add("visible");
+      } else {
+        $("monthSummary").classList.remove("visible");
+        $("monthSummary").innerHTML = "";
+      }
+
+      $("history").innerHTML = list.length ? `
+        <table>
+          <thead>
+            <tr>
+              <th>Date</th>
+              <th>Item</th>
+              <th>Category</th>
+              <th>Place</th>
+              <th>Amount</th>
+              <th style="text-align:right;">Action</th>
+            </tr>
+          </thead>
+          <tbody>` +
+        list.map(x => `
+            <tr>
+              <td>${formatDateDisplay(x.date)}</td>
+              <td><strong>${escapeHtml(x.item)}</strong></td>
+              <td><span class="badge ${getBadgeClass(x.category)}">${x.category}</span></td>
+              <td class="muted">${escapeHtml(x.place || "—")}</td>
+              <td><strong>${money(x.amount)}</strong></td>
+              <td style="text-align:right;"><button class="delete-btn" type="button" onclick="removeExpense(${x.id})">Delete</button></td>
+            </tr>`).join("") +
+        `</tbody>
+        </table>` : `<div class="empty">No expenses found${selectedMonth ? ' for this month' : ''}.</div>`;
+
+      const monthly = expenses.filter(x => isThisMonth(x.date)), total = sum(monthly);
+      const cats = {};
+      monthly.forEach(x => cats[x.category] = (cats[x.category] || 0) + x.amount);
+      const rows = Object.entries(cats).sort((a, b) => b[1] - a[1]);
+
+      $("report").innerHTML = `<div class="report-total">${money(total)}</div>` +
+        (rows.length ? rows.map(([c, v]) => `
+          <div class="cat-row">
+            <div class="cat-info">
+              <span><span class="badge ${getBadgeClass(c)}">${c}</span></span>
+              <b>${money(v)} <span class="muted">(${Math.round((v / total) * 100)}%)</span></b>
+            </div>
+            <div class="bar"><div class="fill" style="width:${total ? (v / total) * 100 : 0}%"></div></div>
+          </div>`).join("") : "<div class='empty'>No expenses this month.</div>");
+
+      buildMonthList();
+      buildCategoryList();
+      buildFilterList();
+    }
+
+    function escapeHtml(s) {
+      return s.replace(/[&<>"']/g, m => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#039;" }[m]));
+    }
+
+    function removeExpense(id) {
+      if (confirm("Are you sure you want to delete this expense?")) {
+        expenses = expenses.filter(x => x.id !== id);
+        save();
+      }
+    }
+
+    function exportCSV() {
+      if (!expenses.length) { alert("No data available to export."); return; }
+      let csv = "ID,Date (DD/MM/YYYY),Item,Category,Place,Amount\n";
+      expenses.forEach(x => {
+        csv += `"${x.id}","${formatDateDisplay(x.date)}","${x.item.replace(/"/g, '""')}","${x.category}","${(x.place || "").replace(/"/g, '""')}","${x.amount}"\n`;
+      });
+      const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = `SKH_Ledger_Expenses_${new Date().toISOString().slice(0, 10)}.csv`;
+      a.click();
+      URL.revokeObjectURL(url);
+    }
+
+    $("search").oninput = render;
+    /* ---------- Populate user info in header ---------- */
+    /* ---------- Populate user info in header ---------- */
+    (function fillUser() {
+      try {
+        const u = JSON.parse(localStorage.getItem(SESSION_KEY) || "{}");
+        if (u.name) {
+          document.getElementById("userNameLabel").textContent = u.name;
+          document.getElementById("userEmailLabel").textContent = u.email || "";
+          const initial = u.name.charAt(0).toUpperCase();
+          const userInitialEl = document.getElementById("userInitial");
+          const userAvatarEl = document.getElementById("userAvatarInitial");
+          if (userInitialEl) userInitialEl.textContent = initial;
+          if (userAvatarEl) userAvatarEl.textContent = initial;
+        }
+      } catch (e) { }
+    })();
+    render();
+  </script>
+</body>
+
+</html>
