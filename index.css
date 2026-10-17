@@ -2,6 +2,14 @@
    SKH Ledger - Premium with New Background & Fixed Dropdown Visibility
    ========================================================================== */
 
+.user-menu-wrap {
+    z-index: 1100;
+}
+
+.user-dropdown {
+    z-index: 1200;
+}
+
 :root {
     --primary: #4f46e5;
     --primary-hover: #4338ca;
@@ -140,8 +148,10 @@ main {
     padding: 36px 0 58px;
     box-shadow: var(--shadow-lg);
     position: relative;
-    overflow: visible; /* Allows dropdown to render outside */
-    z-index: 100;     /* Ensures the header stacks above the metric cards */
+    overflow: visible;
+    /* Allows dropdown to render outside */
+    z-index: 100;
+    /* Ensures the header stacks above the metric cards */
     transition: background 0.3s ease;
 }
 
@@ -436,6 +446,9 @@ main {
     box-shadow: var(--shadow-md);
     border: 1px solid var(--border);
     transition: var(--transition);
+    position: relative;
+    z-index: 1;
+    overflow: visible;
 }
 
 .panel:hover {
@@ -567,7 +580,12 @@ input:focus {
 /* Custom Select */
 .custom-select-wrap {
     position: relative;
+    z-index: 10;
     width: 100%;
+}
+
+.custom-select-wrap.open {
+    z-index: 999 !important;
 }
 
 .custom-select-btn {
@@ -634,7 +652,7 @@ input:focus {
     transform: translateY(-8px) scale(0.97);
     transform-origin: top center;
     transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
-    z-index: 200;
+    z-index: 1000;
     max-height: 170px;
     display: flex;
     flex-direction: column;
@@ -768,12 +786,21 @@ input:focus {
 }
 
 /* Filter row layout */
+.filter-row>* {
+    position: relative;
+}
+
 .filter-row {
     display: flex;
     gap: 12px;
     margin-bottom: 16px;
     flex-wrap: wrap;
     align-items: stretch;
+
+    #history {
+        position: relative;
+        z-index: 1;
+    }
 }
 
 .filter-row>input {
@@ -1258,23 +1285,51 @@ tr:hover td {
     }
 
     .panel {
-        padding: 20px;
+        padding: 16px;
         border-radius: var(--radius-md);
+    }
+
+    .panel-header {
+        margin-bottom: 12px;
     }
 
     .filter-row {
         flex-direction: column;
+        gap: 10px;
     }
 
+    .filter-row>input,
     .filter-row .custom-select-wrap,
-    .month-picker-wrap {
+    .filter-row .month-picker-wrap {
         width: 100%;
+        flex: none;
+        min-width: 0;
     }
 
     .custom-select-dropdown {
         left: 0;
         right: 0;
         min-width: 0;
+        max-height: 45vh;
+        /* never exceed 45% of screen */
+    }
+
+    .custom-select-dropdown .custom-select-list {
+        max-height: 35vh;
+    }
+
+    .custom-select-wrap[data-select="category"] .custom-select-list,
+    .custom-select-wrap[data-select="filter"] .custom-select-list {
+        max-height: 35vh;
+        /* override the 126px cap on mobile */
+    }
+
+    .custom-select-btn,
+    input,
+    .date-input-wrap input[type="date"] {
+        padding-top: 14px;
+        padding-bottom: 14px;
+        font-size: 15px;
     }
 
     .footer-content {
@@ -1302,7 +1357,8 @@ tr:hover td {
     }
 
     .table-responsive {
-        border-radius: var(--radius-md);
+        -webkit-overflow-scrolling: touch;
+        overflow-x: auto;
     }
 
     th:first-child {
