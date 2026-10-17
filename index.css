@@ -1,5 +1,5 @@
 /* ==========================================================================
-   SKH Ledger - Premium + Fully Mobile Friendly
+   SKH Ledger - Premium + Fully Mobile Friendly (FIXED)
    ========================================================================== */
 
 :root {
@@ -289,7 +289,6 @@ main {
     box-shadow: 0 10px 22px rgba(0, 0, 0, 0.25);
 }
 
-/* ---------- HEADER ACTION BUTTONS (perfect circles on mobile) ---------- */
 .theme-toggle,
 .user-btn {
     width: 42px !important;
@@ -496,7 +495,6 @@ label {
     margin-left: 4px;
 }
 
-/* Inputs */
 input {
     width: 100%;
     padding: 12px 18px;
@@ -519,7 +517,6 @@ input:focus {
     transform: translateY(-1px);
 }
 
-/* Date input */
 .date-input-wrap {
     position: relative;
     display: flex;
@@ -584,10 +581,13 @@ input:focus {
     transform: translateY(-50%) scale(1.1);
 }
 
-/* Custom Select */
+/* ============================================================
+   CUSTOM SELECT  — FIXED
+   ============================================================ */
 .custom-select-wrap {
     position: relative;
-    z-index: 10
+    width: 100%;
+    z-index: 10;
 }
 
 .custom-select-wrap.open {
@@ -644,20 +644,38 @@ input:focus {
     transform: rotate(180deg);
 }
 
+/* FIXED — dropdown is a proper absolutely positioned floating panel */
 .custom-select-dropdown {
-        left: 0;
-        right: 0;
-        min-width: 0;
-        max-height: 220px;
-        z-index: 10000 !important;
+    position: absolute;
+    top: calc(100% + 8px);
+    left: 0;
+    right: 0;
+    min-width: 200px;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-md);
+    box-shadow: var(--shadow-lg);
+    padding: 8px;
+    opacity: 0;
+    visibility: hidden;
+    transform: translateY(-8px) scale(0.97);
+    transform-origin: top center;
+    transition: opacity 0.25s cubic-bezier(0.4, 0, 0.2, 1),
+                transform 0.25s cubic-bezier(0.4, 0, 0.2, 1),
+                visibility 0.25s;
+    z-index: 10000 !important;
+    display: flex;
+    flex-direction: column;
+    /* Let dropdown expand past panel edges */
+    overflow: visible;
+    pointer-events: none;   /* hidden state: not clickable */
 }
 
 .custom-select-dropdown.open {
-    overflow: visible;
     opacity: 1;
     visibility: visible;
     transform: translateY(0) scale(1);
-    z-index: 9999 !important;
+    pointer-events: auto;
 }
 
 .custom-select-header {
@@ -693,6 +711,7 @@ input:focus {
     background: rgba(79, 70, 229, 0.1);
 }
 
+/* FIXED — 3 items visible, then scroll */
 .custom-select-list {
     overflow-y: auto;
     flex: 1;
@@ -700,7 +719,8 @@ input:focus {
     flex-direction: column;
     gap: 2px;
     scrollbar-width: thin;
-    max-height: 145px !important;
+    max-height: 145px !important;   /* ≈ 3 items */
+    -webkit-overflow-scrolling: touch;
 }
 
 .custom-select-list::-webkit-scrollbar {
@@ -757,8 +777,10 @@ input:focus {
     flex-shrink: 0;
 }
 
+/* Keep the same 3-item limit for category / filter / month */
 .custom-select-wrap[data-select="category"] .custom-select-list,
-.custom-select-wrap[data-select="filter"] .custom-select-list {
+.custom-select-wrap[data-select="filter"] .custom-select-list,
+.custom-select-wrap[data-select="month"] .custom-select-list {
     max-height: 145px !important;
 }
 
@@ -773,11 +795,11 @@ input:focus {
     overflow: visible !important;
 }
 
-.filter-row>* {
+.filter-row > * {
     position: relative;
 }
 
-.filter-row>input {
+.filter-row > input {
     flex: 1.2;
     min-width: 140px;
 }
@@ -844,7 +866,6 @@ input:focus {
         opacity: 0;
         transform: translateY(-8px);
     }
-
     to {
         opacity: 1;
         transform: translateY(0);
@@ -952,85 +973,23 @@ tr:hover td {
     white-space: nowrap;
 }
 
-.badge-food {
-    background: #fee2e2;
-    color: #991b1b;
-}
+.badge-food { background: #fee2e2; color: #991b1b; }
+.badge-transport { background: #e0e7ff; color: #3730a3; }
+.badge-shopping { background: #fce7f3; color: #831843; }
+.badge-education { background: #dcfce7; color: #166534; }
+.badge-bills { background: #fef3c7; color: #92400e; }
+.badge-entertainment { background: #f3e8ff; color: #6b21a8; }
+.badge-others { background: #f1f5f9; color: #475569; }
+.badge-grocery { background: #d1fae5; color: #065f46; }
 
-.badge-transport {
-    background: #e0e7ff;
-    color: #3730a3;
-}
-
-.badge-shopping {
-    background: #fce7f3;
-    color: #831843;
-}
-
-.badge-education {
-    background: #dcfce7;
-    color: #166534;
-}
-
-.badge-bills {
-    background: #fef3c7;
-    color: #92400e;
-}
-
-.badge-entertainment {
-    background: #f3e8ff;
-    color: #6b21a8;
-}
-
-.badge-others {
-    background: #f1f5f9;
-    color: #475569;
-}
-
-.badge-grocery {
-    background: #d1fae5;
-    color: #065f46;
-}
-
-[data-theme="dark"] .badge-food {
-    background: #7f1d1d;
-    color: #fecaca;
-}
-
-[data-theme="dark"] .badge-transport {
-    background: #312e81;
-    color: #c7d2fe;
-}
-
-[data-theme="dark"] .badge-shopping {
-    background: #831843;
-    color: #fbcfe8;
-}
-
-[data-theme="dark"] .badge-education {
-    background: #14532d;
-    color: #bbf7d0;
-}
-
-[data-theme="dark"] .badge-bills {
-    background: #78350f;
-    color: #fde68a;
-}
-
-[data-theme="dark"] .badge-entertainment {
-    background: #4c1d95;
-    color: #ddd6fe;
-}
-
-[data-theme="dark"] .badge-others {
-    background: #334155;
-    color: #cbd5e1;
-}
-
-[data-theme="dark"] .badge-grocery {
-    background: #064e3b;
-    color: #a7f3d0;
-}
+[data-theme="dark"] .badge-food { background: #7f1d1d; color: #fecaca; }
+[data-theme="dark"] .badge-transport { background: #312e81; color: #c7d2fe; }
+[data-theme="dark"] .badge-shopping { background: #831843; color: #fbcfe8; }
+[data-theme="dark"] .badge-education { background: #14532d; color: #bbf7d0; }
+[data-theme="dark"] .badge-bills { background: #78350f; color: #fde68a; }
+[data-theme="dark"] .badge-entertainment { background: #4c1d95; color: #ddd6fe; }
+[data-theme="dark"] .badge-others { background: #334155; color: #cbd5e1; }
+[data-theme="dark"] .badge-grocery { background: #064e3b; color: #a7f3d0; }
 
 /* Report */
 .report-total {
@@ -1101,18 +1060,9 @@ tr:hover td {
     margin-bottom: 2px;
 }
 
-.footer-brand p {
-    font-size: 12px;
-}
-
-.footer-brand strong {
-    color: #e2e8f0;
-}
-
-.copyright {
-    font-size: 11px;
-    color: var(--footer-text-muted);
-}
+.footer-brand p { font-size: 12px; }
+.footer-brand strong { color: #e2e8f0; }
+.copyright { font-size: 11px; color: var(--footer-text-muted); }
 
 /* User dropdown */
 .user-menu-wrap {
@@ -1216,18 +1166,14 @@ tr:hover td {
     }
 }
 
-/* ==========================================================================
-   RESPONSIVE — TABLET
-   ========================================================================== */
+/* RESPONSIVE — TABLET */
 @media (max-width: 900px) {
     .grid {
         grid-template-columns: 1fr;
     }
 }
 
-/* ==========================================================================
-   RESPONSIVE — PHONE
-   ========================================================================== */
+/* RESPONSIVE — PHONE */
 @media (max-width: 600px) {
     .container {
         padding: 0 14px;
@@ -1254,17 +1200,9 @@ tr:hover td {
         border-radius: var(--radius-md);
     }
 
-    .logo-icon .logo-text {
-        font-size: 15px;
-    }
-
-    .brand h1 {
-        font-size: 20px;
-    }
-
-    .brand .muted {
-        font-size: 12px;
-    }
+    .logo-icon .logo-text { font-size: 15px; }
+    .brand h1 { font-size: 20px; }
+    .brand .muted { font-size: 12px; }
 
     .header-actions {
         justify-content: flex-end;
@@ -1272,46 +1210,29 @@ tr:hover td {
         flex-wrap: nowrap;
     }
 
-    /* Ensure Export button is smaller on mobile so it fits with 3 round buttons */
     .header-actions .btn.secondary:not(.user-btn):not(.theme-toggle) {
         padding: 10px 16px;
         font-size: 13px;
         width: auto;
     }
 
-    /* Cards */
     .cards {
         grid-template-columns: 1fr;
         gap: 10px;
     }
 
-    .card {
-        padding: 16px 18px;
-    }
+    .card { padding: 16px 18px; }
+    .card .label { font-size: 11px; }
+    .card .amount { font-size: 24px; }
 
-    .card .label {
-        font-size: 11px;
-    }
-
-    .card .amount {
-        font-size: 24px;
-    }
-
-    /* Panels */
     .panel {
         padding: 16px;
         border-radius: var(--radius-md);
     }
 
-    .panel-header {
-        margin-bottom: 12px;
-    }
+    .panel-header { margin-bottom: 12px; }
+    h2 { font-size: 16px; }
 
-    h2 {
-        font-size: 16px;
-    }
-
-    /* Bigger touch-friendly inputs */
     input,
     .custom-select-btn,
     .date-input-wrap input[type="date"] {
@@ -1320,13 +1241,12 @@ tr:hover td {
         font-size: 15px;
     }
 
-    /* Filter row stacks */
     .filter-row {
         flex-direction: column;
         gap: 10px;
     }
 
-    .filter-row>input,
+    .filter-row > input,
     .filter-row .custom-select-wrap,
     .month-picker-wrap {
         width: 100%;
@@ -1334,114 +1254,69 @@ tr:hover td {
         min-width: 0;
     }
 
-    /* Dropdowns span full width, taller */
+    /* FIXED — do NOT override the 3-item limit here */
     .custom-select-dropdown {
         left: 0;
         right: 0;
         min-width: 0;
-        max-height: 45vh;
+        max-height: none;         /* dropdown itself can grow */
+        z-index: 10000 !important;
     }
 
-    .custom-select-dropdown .custom-select-list {
-        max-height: 35vh;
-    }
-
+    /* Keep the 3-item cap on mobile (do not override to vh) */
+    .custom-select-dropdown .custom-select-list,
     .custom-select-wrap[data-select="category"] .custom-select-list,
-    .custom-select-wrap[data-select="filter"] .custom-select-list {
-        max-height: 35vh;
+    .custom-select-wrap[data-select="filter"] .custom-select-list,
+    .custom-select-wrap[data-select="month"] .custom-select-list {
+        max-height: 145px !important;
     }
 
-    /* Month summary stacks */
     .month-summary-inner {
         flex-direction: column;
         align-items: flex-start;
         gap: 6px;
     }
 
-    .month-summary-amount {
-        font-size: 16px;
-    }
+    .month-summary-amount { font-size: 16px; }
 
-    /* Table corners */
-    .table-responsive {
-        border-radius: var(--radius-md);
-    }
+    .table-responsive { border-radius: var(--radius-md); }
+    th:first-child { border-top-left-radius: var(--radius-md); }
+    th:last-child { border-top-right-radius: var(--radius-md); }
+    tr:last-child td:first-child { border-bottom-left-radius: var(--radius-md); }
+    tr:last-child td:last-child { border-bottom-right-radius: var(--radius-md); }
 
-    th:first-child {
-        border-top-left-radius: var(--radius-md);
-    }
-
-    th:last-child {
-        border-top-right-radius: var(--radius-md);
-    }
-
-    tr:last-child td:first-child {
-        border-bottom-left-radius: var(--radius-md);
-    }
-
-    tr:last-child td:last-child {
-        border-bottom-right-radius: var(--radius-md);
-    }
-
-    th,
-    td {
+    th, td {
         padding: 10px 12px;
         font-size: 12px;
     }
 
-    /* Report */
-    .report-total {
-        font-size: 22px;
-    }
+    .report-total { font-size: 22px; }
 
     .cat-info {
         font-size: 12px;
         flex-wrap: wrap;
     }
 
-    /* Footer */
-    .footer {
-        padding: 14px 0;
-    }
-
+    .footer { padding: 14px 0; }
     .footer-content {
         flex-direction: column;
         text-align: center;
         gap: 6px;
     }
-
-    .footer-brand .footer-logo {
-        font-size: 14px;
-    }
-
-    .footer-brand p {
-        font-size: 11px;
-    }
-
-    .copyright {
-        font-size: 10px;
-    }
+    .footer-brand .footer-logo { font-size: 14px; }
+    .footer-brand p { font-size: 11px; }
+    .copyright { font-size: 10px; }
 }
 
-/* Extra small phones (<=380px) */
+/* Extra small phones */
 @media (max-width: 380px) {
-    .brand h1 {
-        font-size: 18px;
-    }
-
-    .card .amount {
-        font-size: 22px;
-    }
-
-    .header-actions {
-        gap: 6px;
-    }
-
+    .brand h1 { font-size: 18px; }
+    .card .amount { font-size: 22px; }
+    .header-actions { gap: 6px; }
     .header-actions .btn.secondary:not(.user-btn):not(.theme-toggle) {
         padding: 9px 12px;
         font-size: 12px;
     }
-
     .theme-toggle,
     .user-btn {
         width: 38px !important;
