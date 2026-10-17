@@ -284,7 +284,7 @@ main {
     box-shadow: 0 10px 22px rgba(0, 0, 0, 0.25);
 }
 
-/* ---------- HEADER ACTION BUTTONS (perfect circles on mobile) ---------- */
+/* ---------- HEADER ACTION BUTTONS (perfect circles) ---------- */
 .theme-toggle,
 .user-btn {
     width: 42px !important;
@@ -427,7 +427,7 @@ main {
     transition: var(--transition);
     position: relative;
     z-index: 1;
-    overflow: visible;
+    overflow: visible !important;
     min-width: 0;
 }
 
@@ -558,7 +558,9 @@ input:focus {
     transform: translateY(-50%) scale(1.1);
 }
 
-/* Custom Select */
+/* ============================================================
+   CUSTOM SELECT — unified style for all 3 dropdowns
+   ============================================================ */
 .custom-select-wrap {
     position: relative;
     width: 100%;
@@ -619,12 +621,13 @@ input:focus {
     transform: rotate(180deg);
 }
 
+/* --- Floating dropdown --- */
 .custom-select-dropdown {
     position: absolute;
     top: calc(100% + 8px);
     left: 0;
     right: 0;
-    min-width: 200px;
+    min-width: 220px;
     background: var(--surface);
     border: 1px solid var(--border);
     border-radius: var(--radius-md);
@@ -634,19 +637,24 @@ input:focus {
     visibility: hidden;
     transform: translateY(-8px) scale(0.97);
     transform-origin: top center;
-    transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
-    z-index: 1000;
-    max-height: 170px;
+    transition: opacity 0.25s cubic-bezier(0.4, 0, 0.2, 1),
+                transform 0.25s cubic-bezier(0.4, 0, 0.2, 1),
+                visibility 0.25s;
+    z-index: 10000 !important;
     display: flex;
     flex-direction: column;
+    overflow: visible;
+    pointer-events: none;
 }
 
 .custom-select-dropdown.open {
     opacity: 1;
     visibility: visible;
     transform: translateY(0) scale(1);
+    pointer-events: auto;
 }
 
+/* --- Header bar (Filter by Month / Select Category) --- */
 .custom-select-header {
     display: flex;
     justify-content: space-between;
@@ -676,8 +684,11 @@ input:focus {
     letter-spacing: 0.4px;
 }
 
-.custom-clear-btn:hover { background: rgba(79, 70, 229, 0.1); }
+.custom-clear-btn:hover {
+    background: rgba(79, 70, 229, 0.1);
+}
 
+/* --- Scrollable list: 3 items then scroll --- */
 .custom-select-list {
     overflow-y: auto;
     flex: 1;
@@ -685,11 +696,18 @@ input:focus {
     flex-direction: column;
     gap: 2px;
     scrollbar-width: thin;
-    max-height: 220px;
+    max-height: 145px !important;
+    -webkit-overflow-scrolling: touch;
 }
 
-.custom-select-list::-webkit-scrollbar { width: 4px; }
-.custom-select-list::-webkit-scrollbar-thumb { background: var(--border); border-radius: 4px; }
+.custom-select-list::-webkit-scrollbar {
+    width: 4px;
+}
+
+.custom-select-list::-webkit-scrollbar-thumb {
+    background: var(--border);
+    border-radius: 4px;
+}
 
 .custom-select-item {
     display: flex;
@@ -736,21 +754,27 @@ input:focus {
     flex-shrink: 0;
 }
 
+/* Same 3-item limit for every dropdown */
 .custom-select-wrap[data-select="category"] .custom-select-list,
-.custom-select-wrap[data-select="filter"] .custom-select-list {
-    max-height: 126px;
+.custom-select-wrap[data-select="filter"] .custom-select-list,
+.custom-select-wrap[data-select="month"] .custom-select-list {
+    max-height: 145px !important;
 }
 
-/* Filter row layout */
+/* ================= Filter row layout ================= */
 .filter-row {
     display: flex;
     gap: 12px;
     margin-bottom: 16px;
     flex-wrap: wrap;
     align-items: stretch;
+    position: relative;
+    overflow: visible !important;
 }
 
-.filter-row > * { position: relative; }
+.filter-row > * {
+    position: relative;
+}
 
 .filter-row > input {
     flex: 1.2;
@@ -768,6 +792,17 @@ input:focus {
 }
 
 #history {
+    position: relative;
+    z-index: 1;
+    overflow: visible;
+}
+
+#history .table-responsive {
+    position: relative;
+    z-index: 1;
+}
+
+.report-panel {
     position: relative;
     z-index: 1;
 }
@@ -805,7 +840,7 @@ input:focus {
 
 @keyframes slideDown {
     from { opacity: 0; transform: translateY(-8px); }
-    to { opacity: 1; transform: translateY(0); }
+    to   { opacity: 1; transform: translateY(0); }
 }
 
 .month-summary-text {
@@ -828,7 +863,7 @@ input:focus {
     white-space: nowrap;
 }
 
-/* Table */
+/* ---------- Table ---------- */
 .table-responsive {
     overflow-x: auto;
     -webkit-overflow-scrolling: touch;
@@ -870,7 +905,7 @@ tr:last-child td { border-bottom: none; }
 tr { transition: var(--transition); }
 tr:hover td { background: var(--table-row-hover); }
 
-/* Badges */
+/* ---------- Badges ---------- */
 .badge {
     display: inline-block;
     padding: 4px 12px;
@@ -899,7 +934,7 @@ tr:hover td { background: var(--table-row-hover); }
 [data-theme="dark"] .badge-others { background: #334155; color: #cbd5e1; }
 [data-theme="dark"] .badge-grocery { background: #064e3b; color: #a7f3d0; }
 
-/* Report */
+/* ---------- Report ---------- */
 .report-total {
     font-size: 28px;
     font-weight: 800;
@@ -938,7 +973,7 @@ tr:hover td { background: var(--table-row-hover); }
     padding: 36px 12px;
 }
 
-/* Footer */
+/* ---------- Footer ---------- */
 .footer {
     background: rgba(7, 27, 74, 0.7);
     backdrop-filter: blur(8px);
@@ -970,7 +1005,7 @@ tr:hover td { background: var(--table-row-hover); }
 .footer-brand strong { color: #e2e8f0; }
 .copyright { font-size: 11px; color: var(--footer-text-muted); }
 
-/* User dropdown */
+/* ---------- User dropdown ---------- */
 .user-menu-wrap {
     position: relative;
     z-index: 100;
@@ -1106,14 +1141,12 @@ tr:hover td { background: var(--table-row-hover); }
         flex-wrap: nowrap;
     }
 
-    /* Ensure Export button is smaller on mobile so it fits with 3 round buttons */
     .header-actions .btn.secondary:not(.user-btn):not(.theme-toggle) {
         padding: 10px 16px;
         font-size: 13px;
         width: auto;
     }
 
-    /* Cards */
     .cards {
         grid-template-columns: 1fr;
         gap: 10px;
@@ -1123,7 +1156,6 @@ tr:hover td { background: var(--table-row-hover); }
     .card .label { font-size: 11px; }
     .card .amount { font-size: 24px; }
 
-    /* Panels */
     .panel {
         padding: 16px;
         border-radius: var(--radius-md);
@@ -1133,7 +1165,6 @@ tr:hover td { background: var(--table-row-hover); }
 
     h2 { font-size: 16px; }
 
-    /* Bigger touch-friendly inputs */
     input,
     .custom-select-btn,
     .date-input-wrap input[type="date"] {
@@ -1142,7 +1173,6 @@ tr:hover td { background: var(--table-row-hover); }
         font-size: 15px;
     }
 
-    /* Filter row stacks */
     .filter-row {
         flex-direction: column;
         gap: 10px;
@@ -1156,24 +1186,22 @@ tr:hover td { background: var(--table-row-hover); }
         min-width: 0;
     }
 
-    /* Dropdowns span full width, taller */
+    /* Dropdown: no override for list max-height — 3-item limit stays */
     .custom-select-dropdown {
         left: 0;
         right: 0;
         min-width: 0;
-        max-height: 45vh;
+        max-height: none;
+        z-index: 10000 !important;
     }
 
-    .custom-select-dropdown .custom-select-list {
-        max-height: 35vh;
-    }
-
+    .custom-select-dropdown .custom-select-list,
     .custom-select-wrap[data-select="category"] .custom-select-list,
-    .custom-select-wrap[data-select="filter"] .custom-select-list {
-        max-height: 35vh;
+    .custom-select-wrap[data-select="filter"] .custom-select-list,
+    .custom-select-wrap[data-select="month"] .custom-select-list {
+        max-height: 145px !important;
     }
 
-    /* Month summary stacks */
     .month-summary-inner {
         flex-direction: column;
         align-items: flex-start;
@@ -1182,7 +1210,6 @@ tr:hover td { background: var(--table-row-hover); }
 
     .month-summary-amount { font-size: 16px; }
 
-    /* Table corners */
     .table-responsive { border-radius: var(--radius-md); }
     th:first-child { border-top-left-radius: var(--radius-md); }
     th:last-child { border-top-right-radius: var(--radius-md); }
@@ -1194,7 +1221,6 @@ tr:hover td { background: var(--table-row-hover); }
         font-size: 12px;
     }
 
-    /* Report */
     .report-total { font-size: 22px; }
 
     .cat-info {
@@ -1202,7 +1228,6 @@ tr:hover td { background: var(--table-row-hover); }
         flex-wrap: wrap;
     }
 
-    /* Footer */
     .footer { padding: 14px 0; }
     .footer-content {
         flex-direction: column;
@@ -1214,7 +1239,6 @@ tr:hover td { background: var(--table-row-hover); }
     .copyright { font-size: 10px; }
 }
 
-/* Extra small phones (<=380px) */
 @media (max-width: 380px) {
     .brand h1 { font-size: 18px; }
     .card .amount { font-size: 22px; }
