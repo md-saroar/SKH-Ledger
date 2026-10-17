@@ -219,11 +219,10 @@
   </footer>
 
   <script>
-    /* ---------- Auth Guard (must run first) ---------- */
+    /* ---------- Auth Guard ---------- */
     const SESSION_KEY = "skh_session";
     (function guard() {
-      const session = localStorage.getItem(SESSION_KEY);
-      if (!session) {
+      if (!localStorage.getItem(SESSION_KEY)) {
         window.location.replace("login.html");
       }
     })();
@@ -258,8 +257,7 @@
       localStorage.setItem(THEME_KEY, theme);
     }
     function toggleTheme() {
-      const current = document.documentElement.getAttribute("data-theme") === "dark" ? "light" : "dark";
-      applyTheme(current);
+      applyTheme(document.documentElement.getAttribute("data-theme") === "dark" ? "light" : "dark");
     }
     (function initTheme() {
       const saved = localStorage.getItem(THEME_KEY);
@@ -271,63 +269,44 @@
     function money(n) {
       return "৳" + Number(n).toLocaleString("en-BD", { maximumFractionDigits: 2 });
     }
-
     function formatDateDisplay(dateStr) {
       if (!dateStr) return "—";
       const [year, month, day] = dateStr.split("-");
       return `${day}/${month}/${year}`;
     }
-
     function monthLabel(ym) {
       if (!ym) return "All Months";
       const [y, m] = ym.split("-");
-      const d = new Date(Number(y), Number(m) - 1, 1);
-      return d.toLocaleString("en-US", { month: "long", year: "numeric" });
+      return new Date(Number(y), Number(m) - 1, 1).toLocaleString("en-US", { month: "long", year: "numeric" });
     }
-
     function save() {
       localStorage.setItem(KEY, JSON.stringify(expenses));
       render();
     }
-
     function dayStart(d) {
       let x = new Date(d);
       x.setHours(0, 0, 0, 0);
       return x;
     }
-
-    function isToday(d) {
-      return d === new Date().toISOString().slice(0, 10);
-    }
-
+    function isToday(d) { return d === new Date().toISOString().slice(0, 10); }
     function isThisWeek(d) {
-      const x = dayStart(d), now = dayStart(new Date().toISOString().slice(0, 10));
-      const diff = (now - x) / 86400000;
+      const diff = (dayStart(new Date().toISOString().slice(0, 10)) - dayStart(d)) / 86400000;
       return diff >= 0 && diff < 7;
     }
-
-    function isThisMonth(d) {
-      return d.slice(0, 7) === new Date().toISOString().slice(0, 7);
-    }
+    function isThisMonth(d) { return d.slice(0, 7) === new Date().toISOString().slice(0, 7); }
 
     function getBadgeClass(cat) {
       const map = {
-        Food: 'badge-food',
-        Transport: 'badge-transport',
-        Shopping: 'badge-shopping',
-        Education: 'badge-education',
-        Bills: 'badge-bills',
-        Entertainment: 'badge-entertainment',
-        Others: 'badge-others',
-        Grocery: 'badge-grocery'
+        Food: 'badge-food', Transport: 'badge-transport', Shopping: 'badge-shopping',
+        Education: 'badge-education', Bills: 'badge-bills', Entertainment: 'badge-entertainment',
+        Others: 'badge-others', Grocery: 'badge-grocery'
       };
       return map[cat] || 'badge-others';
     }
 
-    /* ---------- Custom Select ---------- */
+    /* ---------- Custom Select Builders ---------- */
     function buildCategoryList() {
-      const listEl = $("categoryList");
-      listEl.innerHTML = CATEGORIES.map(c => {
+      $("categoryList").innerHTML = CATEGORIES.map(c => {
         const active = $("category").value === c ? "active" : "";
         return `<div class="custom-select-item ${active}" onclick="selectCategory('${c}')">
           <span>${c}</span>
@@ -335,7 +314,6 @@
         </div>`;
       }).join("");
     }
-
     function selectCategory(c) {
       $("category").value = c;
       $("categoryLabel").textContent = c;
@@ -344,7 +322,6 @@
     }
 
     function buildFilterList() {
-      const listEl = $("filterList");
       const allActive = $("filter").value === "All";
       let html = `<div class="custom-select-item ${allActive ? 'active' : ''}" onclick="selectFilter('All')">
         <span>All Categories</span>
@@ -357,9 +334,8 @@
           ${active ? '<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><polyline points="20 6 9 17 4 12"/></svg>' : ''}
         </div>`;
       }).join("");
-      listEl.innerHTML = html;
+      $("filterList").innerHTML = html;
     }
-
     function selectFilter(v) {
       $("filter").value = v;
       $("filterLabel").textContent = v === "All" ? "All Categories" : v;
@@ -372,8 +348,7 @@
       const months = new Set();
       expenses.forEach(x => months.add(x.date.slice(0, 7)));
       const sorted = [...months].sort((a, b) => b.localeCompare(a));
-      const listEl = $("monthList");
-      listEl.innerHTML = `
+      $("monthList").innerHTML = `
         <div class="custom-select-item ${!selectedMonth ? 'active' : ''}" onclick="selectMonth('')">
           <span>All Months</span>
           <span class="custom-select-count">${expenses.length}</span>
@@ -387,14 +362,12 @@
         </div>`;
       }).join("");
     }
-
     function selectMonth(ym) {
       selectedMonth = ym;
       $("monthBtnLabel").textContent = monthLabel(ym);
       closeAllCustomSelects();
       render();
     }
-
     function clearMonth(e) {
       e.stopPropagation();
       selectMonth("");
@@ -406,28 +379,18 @@
       const wrap = dd.closest(".custom-select-wrap");
       const isOpen = dd.classList.contains("open");
 
-      // Close all first
       closeAllCustomSelects();
 
       if (!isOpen) {
-        // Build the appropriate list
         if (name === "category") buildCategoryList();
         if (name === "filter") buildFilterList();
         if (name === "month") buildMonthList();
 
-        // Open dropdown
         dd.classList.add("open");
         wrap.classList.add("open");
-
-        // Ensure dropdown stays within viewport
         positionDropdown(dd);
       }
     }
-
-    window.addEventListener("resize", () => {
-      const openDd = document.querySelector(".custom-select-dropdown.open");
-      if (openDd) positionDropdown(openDd);
-    });
 
     function positionDropdown(dd) {
       dd.style.transformOrigin = "top center";
@@ -436,10 +399,8 @@
 
       requestAnimationFrame(() => {
         const rect = dd.getBoundingClientRect();
-        const viewportHeight = window.innerHeight;
         const safeMargin = 40;
-
-        if (rect.bottom > viewportHeight - safeMargin) {
+        if (rect.bottom > window.innerHeight - safeMargin) {
           dd.style.transformOrigin = "bottom center";
           dd.style.top = "auto";
           dd.style.bottom = "calc(100% + 8px)";
@@ -460,10 +421,12 @@
     document.addEventListener("click", e => {
       if (!e.target.closest(".custom-select-wrap")) closeAllCustomSelects();
     });
-
-    // Close on escape key
     document.addEventListener("keydown", e => {
       if (e.key === "Escape") closeAllCustomSelects();
+    });
+    window.addEventListener("resize", () => {
+      const openDd = document.querySelector(".custom-select-dropdown.open");
+      if (openDd) positionDropdown(openDd);
     });
 
     /* ---------- Form Submit ---------- */
@@ -493,7 +456,7 @@
       $("monthTotal").textContent = money(sum(expenses.filter(x => isThisMonth(x.date))));
 
       const q = $("search").value.toLowerCase(), f = $("filter").value;
-      let list = expenses.filter(x => {
+      const list = expenses.filter(x => {
         if (selectedMonth && x.date.slice(0, 7) !== selectedMonth) return false;
         if (f !== "All" && x.category !== f) return false;
         if (q && !(x.item.toLowerCase().includes(q) || (x.place || "").toLowerCase().includes(q))) return false;
@@ -531,17 +494,18 @@
               <th style="text-align:right;">Action</th>
             </tr>
           </thead>
-          <tbody>` +
-        list.map(x => `
-            <tr>
-              <td>${formatDateDisplay(x.date)}</td>
-              <td><strong>${escapeHtml(x.item)}</strong></td>
-              <td><span class="badge ${getBadgeClass(x.category)}">${x.category}</span></td>
-              <td class="muted">${escapeHtml(x.place || "—")}</td>
-              <td><strong>${money(x.amount)}</strong></td>
-              <td style="text-align:right;"><button class="delete-btn" type="button" onclick="removeExpense(${x.id})">Delete</button></td>
-            </tr>`).join("") +
-        `</tbody>
+          <tbody>
+            ${list.map(x => `
+              <tr>
+                <td>${formatDateDisplay(x.date)}</td>
+                <td><strong>${escapeHtml(x.item)}</strong></td>
+                <td><span class="badge ${getBadgeClass(x.category)}">${x.category}</span></td>
+                <td class="muted">${escapeHtml(x.place || "—")}</td>
+                <td><strong>${money(x.amount)}</strong></td>
+                <td style="text-align:right;"><button class="delete-btn" type="button" onclick="removeExpense(${x.id})">Delete</button></td>
+              </tr>
+            `).join("")}
+          </tbody>
         </table>` : `<div class="empty">No expenses found${selectedMonth ? ' for this month' : ''}.</div>`;
 
       const monthly = expenses.filter(x => isThisMonth(x.date)), total = sum(monthly);
@@ -591,8 +555,8 @@
     }
 
     $("search").oninput = render;
-    /* ---------- Populate user info in header ---------- */
-    /* ---------- Populate user info in header ---------- */
+
+    /* ---------- User Info ---------- */
     (function fillUser() {
       try {
         const u = JSON.parse(localStorage.getItem(SESSION_KEY) || "{}");
@@ -600,13 +564,14 @@
           document.getElementById("userNameLabel").textContent = u.name;
           document.getElementById("userEmailLabel").textContent = u.email || "";
           const initial = u.name.charAt(0).toUpperCase();
-          const userInitialEl = document.getElementById("userInitial");
-          const userAvatarEl = document.getElementById("userAvatarInitial");
-          if (userInitialEl) userInitialEl.textContent = initial;
-          if (userAvatarEl) userAvatarEl.textContent = initial;
+          const a = document.getElementById("userInitial");
+          const b = document.getElementById("userAvatarInitial");
+          if (a) a.textContent = initial;
+          if (b) b.textContent = initial;
         }
       } catch (e) { }
     })();
+
     render();
   </script>
 </body>
