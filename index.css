@@ -870,22 +870,20 @@ input:focus {
 
 /* ---------- Table ---------- */
 .table-responsive {
-    overflow-x: auto;
-    -webkit-overflow-scrolling: touch;
-    border-radius: var(--radius-md);
+    overflow-x: auto;              /* This enables the sliding */
+    -webkit-overflow-scrolling: touch; /* Makes it smooth on iPhones */
+    border-radius: var(--radius-lg);
     border: 1px solid var(--border);
     background: var(--surface);
     box-shadow: var(--shadow-sm);
-    /* FIX: Ensure the container doesn't stretch the page and scrolls smoothly */
     display: block;
     width: 100%;
     max-width: 100%;
 }
 
 table {
-    /* FIX: Use auto width so columns take up space naturally and trigger the scroll */
-    width: max-content; 
-    min-width: 100%;
+    width: max-content; /* Allows the table to grow wider than the screen */
+    min-width: 100%;    /* Keeps it looking full-width on desktop */
     border-collapse: separate;
     border-spacing: 0;
     white-space: nowrap;
