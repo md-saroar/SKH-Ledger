@@ -966,23 +966,23 @@ input:focus, select.custom-modal-select:focus {
 
 /* Table */
 .table-responsive {
-    overflow-x: auto;
-    -webkit-overflow-scrolling: touch;
+    width: 100%;
+    overflow-x: auto !important;
+    overflow-y: hidden;
+    -webkit-overflow-scrolling: touch; /* Momentum smooth scrolling on iOS/Android */
     border-radius: var(--radius-lg);
     border: 1px solid var(--border);
     background: var(--surface);
     box-shadow: var(--shadow-sm);
-    display: block;
-    width: 100%;
-    max-width: 100%;
+    touch-action: pan-x pan-y;
 }
 
 table {
-    width: max-content;
+    width: max-content !important; /* Force table to expand beyond mobile viewport width */
     min-width: 100%;
     border-collapse: separate;
     border-spacing: 0;
-    white-space: nowrap;
+    white-space: nowrap; /* Prevent line breaks so columns never squish */
     background: var(--surface);
 }
 
@@ -991,6 +991,7 @@ th, td {
     text-align: left;
     font-size: 13px;
     border-bottom: 1px solid var(--border);
+    white-space: nowrap;
 }
 
 th {
