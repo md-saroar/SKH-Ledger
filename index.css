@@ -571,6 +571,11 @@ input:focus {
     z-index: 999 !important;
 }
 
+/* Raise the whole panel when a dropdown is open */
+.panel:has(.custom-select-wrap.open) {
+    z-index: 999 !important;
+}
+
 .custom-select-btn {
     width: 100%;
     display: flex;
