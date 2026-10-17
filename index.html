@@ -129,6 +129,9 @@
                 </svg>
               </button>
               <div class="custom-select-dropdown" id="categoryDropdown">
+                <div class="custom-select-header">
+                  <span>Select Category</span>
+                </div>
                 <div class="custom-select-list" id="categoryList"></div>
               </div>
               <input type="hidden" id="category" value="Grocery">
@@ -168,6 +171,9 @@
                 </svg>
               </button>
               <div class="custom-select-dropdown" id="filterDropdown">
+                <div class="custom-select-header">
+                  <span>Filter by Category</span>
+                </div>
                 <div class="custom-select-list" id="filterList"></div>
               </div>
               <input type="hidden" id="filter" value="All">
@@ -306,14 +312,19 @@
 
     /* ---------- Custom Select Builders ---------- */
     function buildCategoryList() {
-      $("categoryList").innerHTML = CATEGORIES.map(c => {
+      const listEl = $("categoryList");
+      listEl.innerHTML = CATEGORIES.map(c => {
         const active = $("category").value === c ? "active" : "";
+        const count = expenses.filter(x => x.category === c).length;
         return `<div class="custom-select-item ${active}" onclick="selectCategory('${c}')">
           <span>${c}</span>
-          ${active ? '<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><polyline points="20 6 9 17 4 12"/></svg>' : ''}
+          ${active
+            ? '<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><polyline points="20 6 9 17 4 12"/></svg>'
+            : `<span class="custom-select-count">${count}</span>`}
         </div>`;
       }).join("");
     }
+
     function selectCategory(c) {
       $("category").value = c;
       $("categoryLabel").textContent = c;
@@ -322,20 +333,28 @@
     }
 
     function buildFilterList() {
+      const listEl = $("filterList");
       const allActive = $("filter").value === "All";
+      const allCount = expenses.length;
       let html = `<div class="custom-select-item ${allActive ? 'active' : ''}" onclick="selectFilter('All')">
         <span>All Categories</span>
-        ${allActive ? '<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><polyline points="20 6 9 17 4 12"/></svg>' : ''}
+        ${allActive
+          ? '<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><polyline points="20 6 9 17 4 12"/></svg>'
+          : `<span class="custom-select-count">${allCount}</span>`}
       </div>`;
       html += CATEGORIES.map(c => {
         const active = $("filter").value === c ? "active" : "";
+        const count = expenses.filter(x => x.category === c).length;
         return `<div class="custom-select-item ${active}" onclick="selectFilter('${c}')">
           <span>${c}</span>
-          ${active ? '<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><polyline points="20 6 9 17 4 12"/></svg>' : ''}
+          ${active
+            ? '<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><polyline points="20 6 9 17 4 12"/></svg>'
+            : `<span class="custom-select-count">${count}</span>`}
         </div>`;
       }).join("");
-      $("filterList").innerHTML = html;
+      listEl.innerHTML = html;
     }
+
     function selectFilter(v) {
       $("filter").value = v;
       $("filterLabel").textContent = v === "All" ? "All Categories" : v;
@@ -348,7 +367,8 @@
       const months = new Set();
       expenses.forEach(x => months.add(x.date.slice(0, 7)));
       const sorted = [...months].sort((a, b) => b.localeCompare(a));
-      $("monthList").innerHTML = `
+      const listEl = $("monthList");
+      listEl.innerHTML = `
         <div class="custom-select-item ${!selectedMonth ? 'active' : ''}" onclick="selectMonth('')">
           <span>All Months</span>
           <span class="custom-select-count">${expenses.length}</span>
@@ -362,12 +382,14 @@
         </div>`;
       }).join("");
     }
+
     function selectMonth(ym) {
       selectedMonth = ym;
       $("monthBtnLabel").textContent = monthLabel(ym);
       closeAllCustomSelects();
       render();
     }
+
     function clearMonth(e) {
       e.stopPropagation();
       selectMonth("");
