@@ -1,5 +1,5 @@
 /* ==========================================================================
-   SKH Ledger - Premium + Fully Mobile Friendly (FIXED)
+   SKH Ledger - Premium + Fully Mobile Friendly
    ========================================================================== */
 
 :root {
@@ -254,13 +254,8 @@ main {
     transition: 0.5s;
 }
 
-.btn:hover::after {
-    left: 100%;
-}
-
-.btn:active {
-    transform: scale(0.96) !important;
-}
+.btn:hover::after { left: 100%; }
+.btn:active { transform: scale(0.96) !important; }
 
 .btn.primary {
     width: 100%;
@@ -289,6 +284,7 @@ main {
     box-shadow: 0 10px 22px rgba(0, 0, 0, 0.25);
 }
 
+/* ---------- HEADER ACTION BUTTONS (perfect circles on mobile) ---------- */
 .theme-toggle,
 .user-btn {
     width: 42px !important;
@@ -318,25 +314,10 @@ main {
     transition: opacity 0.25s ease, transform 0.25s ease;
 }
 
-[data-theme="light"] .theme-toggle .sun-icon {
-    opacity: 1;
-    transform: rotate(0deg) scale(1);
-}
-
-[data-theme="light"] .theme-toggle .moon-icon {
-    opacity: 0;
-    transform: rotate(-90deg) scale(0.6);
-}
-
-[data-theme="dark"] .theme-toggle .sun-icon {
-    opacity: 0;
-    transform: rotate(90deg) scale(0.6);
-}
-
-[data-theme="dark"] .theme-toggle .moon-icon {
-    opacity: 1;
-    transform: rotate(0deg) scale(1);
-}
+[data-theme="light"] .theme-toggle .sun-icon { opacity: 1; transform: rotate(0deg) scale(1); }
+[data-theme="light"] .theme-toggle .moon-icon { opacity: 0; transform: rotate(-90deg) scale(0.6); }
+[data-theme="dark"] .theme-toggle .sun-icon { opacity: 0; transform: rotate(90deg) scale(0.6); }
+[data-theme="dark"] .theme-toggle .moon-icon { opacity: 1; transform: rotate(0deg) scale(1); }
 
 .delete-btn {
     background: #fee2e2;
@@ -359,9 +340,7 @@ main {
     box-shadow: 0 6px 15px rgba(239, 68, 68, 0.35);
 }
 
-.delete-btn:active {
-    transform: scale(0.92);
-}
+.delete-btn:active { transform: scale(0.92); }
 
 /* Floating Metric Cards */
 .cards-wrapper {
@@ -389,9 +368,7 @@ main {
     min-width: 0;
 }
 
-[data-theme="dark"] .card {
-    border: 1px solid var(--border);
-}
+[data-theme="dark"] .card { border: 1px solid var(--border); }
 
 .card:hover {
     transform: translateY(-6px);
@@ -450,7 +427,7 @@ main {
     transition: var(--transition);
     position: relative;
     z-index: 1;
-    overflow: visible !important;
+    overflow: visible;
     min-width: 0;
 }
 
@@ -473,9 +450,7 @@ h2 {
     letter-spacing: -0.3px;
 }
 
-.form-group {
-    margin-bottom: 16px;
-}
+.form-group { margin-bottom: 16px; }
 
 label {
     display: block;
@@ -495,6 +470,7 @@ label {
     margin-left: 4px;
 }
 
+/* Inputs */
 input {
     width: 100%;
     padding: 12px 18px;
@@ -517,6 +493,7 @@ input:focus {
     transform: translateY(-1px);
 }
 
+/* Date input */
 .date-input-wrap {
     position: relative;
     display: flex;
@@ -576,14 +553,12 @@ input:focus {
     transform: translateY(-1px);
 }
 
-.date-input-wrap input[type="date"]:focus+.date-icon {
+.date-input-wrap input[type="date"]:focus + .date-icon {
     color: var(--primary);
     transform: translateY(-50%) scale(1.1);
 }
 
-/* ============================================================
-   CUSTOM SELECT  — FIXED
-   ============================================================ */
+/* Custom Select */
 .custom-select-wrap {
     position: relative;
     width: 100%;
@@ -644,7 +619,6 @@ input:focus {
     transform: rotate(180deg);
 }
 
-/* FIXED — dropdown is a proper absolutely positioned floating panel */
 .custom-select-dropdown {
     position: absolute;
     top: calc(100% + 8px);
@@ -660,22 +634,17 @@ input:focus {
     visibility: hidden;
     transform: translateY(-8px) scale(0.97);
     transform-origin: top center;
-    transition: opacity 0.25s cubic-bezier(0.4, 0, 0.2, 1),
-                transform 0.25s cubic-bezier(0.4, 0, 0.2, 1),
-                visibility 0.25s;
-    z-index: 10000 !important;
+    transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+    z-index: 1000;
+    max-height: 170px;
     display: flex;
     flex-direction: column;
-    /* Let dropdown expand past panel edges */
-    overflow: visible;
-    pointer-events: none;   /* hidden state: not clickable */
 }
 
 .custom-select-dropdown.open {
     opacity: 1;
     visibility: visible;
     transform: translateY(0) scale(1);
-    pointer-events: auto;
 }
 
 .custom-select-header {
@@ -707,11 +676,8 @@ input:focus {
     letter-spacing: 0.4px;
 }
 
-.custom-clear-btn:hover {
-    background: rgba(79, 70, 229, 0.1);
-}
+.custom-clear-btn:hover { background: rgba(79, 70, 229, 0.1); }
 
-/* FIXED — 3 items visible, then scroll */
 .custom-select-list {
     overflow-y: auto;
     flex: 1;
@@ -719,18 +685,11 @@ input:focus {
     flex-direction: column;
     gap: 2px;
     scrollbar-width: thin;
-    max-height: 145px !important;   /* ≈ 3 items */
-    -webkit-overflow-scrolling: touch;
+    max-height: 220px;
 }
 
-.custom-select-list::-webkit-scrollbar {
-    width: 4px;
-}
-
-.custom-select-list::-webkit-scrollbar-thumb {
-    background: var(--border);
-    border-radius: 4px;
-}
+.custom-select-list::-webkit-scrollbar { width: 4px; }
+.custom-select-list::-webkit-scrollbar-thumb { background: var(--border); border-radius: 4px; }
 
 .custom-select-item {
     display: flex;
@@ -777,11 +736,9 @@ input:focus {
     flex-shrink: 0;
 }
 
-/* Keep the same 3-item limit for category / filter / month */
 .custom-select-wrap[data-select="category"] .custom-select-list,
-.custom-select-wrap[data-select="filter"] .custom-select-list,
-.custom-select-wrap[data-select="month"] .custom-select-list {
-    max-height: 145px !important;
+.custom-select-wrap[data-select="filter"] .custom-select-list {
+    max-height: 126px;
 }
 
 /* Filter row layout */
@@ -791,13 +748,9 @@ input:focus {
     margin-bottom: 16px;
     flex-wrap: wrap;
     align-items: stretch;
-    position: relative;
-    overflow: visible !important;
 }
 
-.filter-row > * {
-    position: relative;
-}
+.filter-row > * { position: relative; }
 
 .filter-row > input {
     flex: 1.2;
@@ -815,17 +768,6 @@ input:focus {
 }
 
 #history {
-    position: relative;
-    z-index: 1;
-    overflow: visible;
-}
-
-#history .table-responsive {
-    position: relative;
-    z-index: 1;
-}
-
-.report-panel {
     position: relative;
     z-index: 1;
 }
@@ -862,14 +804,8 @@ input:focus {
 }
 
 @keyframes slideDown {
-    from {
-        opacity: 0;
-        transform: translateY(-8px);
-    }
-    to {
-        opacity: 1;
-        transform: translateY(0);
-    }
+    from { opacity: 0; transform: translateY(-8px); }
+    to { opacity: 1; transform: translateY(0); }
 }
 
 .month-summary-text {
@@ -881,15 +817,8 @@ input:focus {
     font-weight: 500;
 }
 
-.month-summary-text svg {
-    color: var(--primary);
-    flex-shrink: 0;
-}
-
-.month-summary-text strong {
-    color: var(--text-main);
-    font-weight: 700;
-}
+.month-summary-text svg { color: var(--primary); flex-shrink: 0; }
+.month-summary-text strong { color: var(--text-main); font-weight: 700; }
 
 .month-summary-amount {
     font-size: 18px;
@@ -917,8 +846,7 @@ table {
     background: var(--surface);
 }
 
-th,
-td {
+th, td {
     padding: 14px 16px;
     text-align: left;
     font-size: 13px;
@@ -934,33 +862,13 @@ th {
     letter-spacing: 0.5px;
 }
 
-th:first-child {
-    border-top-left-radius: var(--radius-lg);
-}
-
-th:last-child {
-    border-top-right-radius: var(--radius-lg);
-}
-
-tr:last-child td:first-child {
-    border-bottom-left-radius: var(--radius-lg);
-}
-
-tr:last-child td:last-child {
-    border-bottom-right-radius: var(--radius-lg);
-}
-
-tr:last-child td {
-    border-bottom: none;
-}
-
-tr {
-    transition: var(--transition);
-}
-
-tr:hover td {
-    background: var(--table-row-hover);
-}
+th:first-child { border-top-left-radius: var(--radius-lg); }
+th:last-child { border-top-right-radius: var(--radius-lg); }
+tr:last-child td:first-child { border-bottom-left-radius: var(--radius-lg); }
+tr:last-child td:last-child { border-bottom-right-radius: var(--radius-lg); }
+tr:last-child td { border-bottom: none; }
+tr { transition: var(--transition); }
+tr:hover td { background: var(--table-row-hover); }
 
 /* Badges */
 .badge {
@@ -999,9 +907,7 @@ tr:hover td {
     letter-spacing: -0.5px;
 }
 
-.cat-row {
-    margin-bottom: 14px;
-}
+.cat-row { margin-bottom: 14px; }
 
 .cat-info {
     display: flex;
@@ -1150,38 +1056,27 @@ tr:hover td {
     transition: var(--transition);
 }
 
-.user-logout:hover {
-    background: #fee2e2;
-    color: #991b1b;
-}
-
-[data-theme="dark"] .user-logout:hover {
-    background: #7f1d1d;
-    color: #fecaca;
-}
+.user-logout:hover { background: #fee2e2; color: #991b1b; }
+[data-theme="dark"] .user-logout:hover { background: #7f1d1d; color: #fecaca; }
 
 @media (min-width: 1400px) {
-    .container {
-        max-width: 1280px;
-    }
+    .container { max-width: 1280px; }
 }
 
-/* RESPONSIVE — TABLET */
+/* ==========================================================================
+   RESPONSIVE — TABLET
+   ========================================================================== */
 @media (max-width: 900px) {
-    .grid {
-        grid-template-columns: 1fr;
-    }
+    .grid { grid-template-columns: 1fr; }
 }
 
-/* RESPONSIVE — PHONE */
+/* ==========================================================================
+   RESPONSIVE — PHONE
+   ========================================================================== */
 @media (max-width: 600px) {
-    .container {
-        padding: 0 14px;
-    }
+    .container { padding: 0 14px; }
 
-    .header {
-        padding: 20px 0 40px;
-    }
+    .header { padding: 20px 0 40px; }
 
     .header-content {
         flex-direction: column;
@@ -1201,6 +1096,7 @@ tr:hover td {
     }
 
     .logo-icon .logo-text { font-size: 15px; }
+
     .brand h1 { font-size: 20px; }
     .brand .muted { font-size: 12px; }
 
@@ -1210,12 +1106,14 @@ tr:hover td {
         flex-wrap: nowrap;
     }
 
+    /* Ensure Export button is smaller on mobile so it fits with 3 round buttons */
     .header-actions .btn.secondary:not(.user-btn):not(.theme-toggle) {
         padding: 10px 16px;
         font-size: 13px;
         width: auto;
     }
 
+    /* Cards */
     .cards {
         grid-template-columns: 1fr;
         gap: 10px;
@@ -1225,14 +1123,17 @@ tr:hover td {
     .card .label { font-size: 11px; }
     .card .amount { font-size: 24px; }
 
+    /* Panels */
     .panel {
         padding: 16px;
         border-radius: var(--radius-md);
     }
 
     .panel-header { margin-bottom: 12px; }
+
     h2 { font-size: 16px; }
 
+    /* Bigger touch-friendly inputs */
     input,
     .custom-select-btn,
     .date-input-wrap input[type="date"] {
@@ -1241,6 +1142,7 @@ tr:hover td {
         font-size: 15px;
     }
 
+    /* Filter row stacks */
     .filter-row {
         flex-direction: column;
         gap: 10px;
@@ -1254,23 +1156,24 @@ tr:hover td {
         min-width: 0;
     }
 
-    /* FIXED — do NOT override the 3-item limit here */
+    /* Dropdowns span full width, taller */
     .custom-select-dropdown {
         left: 0;
         right: 0;
         min-width: 0;
-        max-height: none;         /* dropdown itself can grow */
-        z-index: 10000 !important;
+        max-height: 45vh;
     }
 
-    /* Keep the 3-item cap on mobile (do not override to vh) */
-    .custom-select-dropdown .custom-select-list,
+    .custom-select-dropdown .custom-select-list {
+        max-height: 35vh;
+    }
+
     .custom-select-wrap[data-select="category"] .custom-select-list,
-    .custom-select-wrap[data-select="filter"] .custom-select-list,
-    .custom-select-wrap[data-select="month"] .custom-select-list {
-        max-height: 145px !important;
+    .custom-select-wrap[data-select="filter"] .custom-select-list {
+        max-height: 35vh;
     }
 
+    /* Month summary stacks */
     .month-summary-inner {
         flex-direction: column;
         align-items: flex-start;
@@ -1279,6 +1182,7 @@ tr:hover td {
 
     .month-summary-amount { font-size: 16px; }
 
+    /* Table corners */
     .table-responsive { border-radius: var(--radius-md); }
     th:first-child { border-top-left-radius: var(--radius-md); }
     th:last-child { border-top-right-radius: var(--radius-md); }
@@ -1290,6 +1194,7 @@ tr:hover td {
         font-size: 12px;
     }
 
+    /* Report */
     .report-total { font-size: 22px; }
 
     .cat-info {
@@ -1297,6 +1202,7 @@ tr:hover td {
         flex-wrap: wrap;
     }
 
+    /* Footer */
     .footer { padding: 14px 0; }
     .footer-content {
         flex-direction: column;
@@ -1308,7 +1214,7 @@ tr:hover td {
     .copyright { font-size: 10px; }
 }
 
-/* Extra small phones */
+/* Extra small phones (<=380px) */
 @media (max-width: 380px) {
     .brand h1 { font-size: 18px; }
     .card .amount { font-size: 22px; }
