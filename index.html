@@ -10,6 +10,11 @@
     href="https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,400;14..32,500;14..32,600;14..32,700;14..32,800&display=swap"
     rel="stylesheet">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
+  <style>
+    .panel.z-top {
+      z-index: 999 !important;
+    }
+  </style>
 </head>
 
 <body>
@@ -74,17 +79,26 @@
   <main class="container">
     <section class="cards-wrapper">
       <div class="cards">
+        <div class="card balance-card">
+          <div class="card-header-flex">
+            <span class="label">My Balance</span>
+            <button type="button" class="balance-edit-btn" onclick="openBalanceModal()" title="Set or Add Balance">
+              <i class="fa-solid fa-pen-to-square"></i> Set
+            </button>
+          </div>
+          <div class="amount" id="currentBalance">৳0</div>
+        </div>
         <div class="card">
           <span class="label">Today's Spend</span>
-          <div class="amount" id="todayTotal">0</div>
+          <div class="amount" id="todayTotal">৳0</div>
         </div>
         <div class="card">
           <span class="label">This Week</span>
-          <div class="amount" id="weekTotal">0</div>
+          <div class="amount" id="weekTotal">৳0</div>
         </div>
         <div class="card">
           <span class="label">This Month</span>
-          <div class="amount" id="monthTotal">0</div>
+          <div class="amount" id="monthTotal">৳0</div>
         </div>
       </div>
     </section>
@@ -109,7 +123,7 @@
           </div>
 
           <div class="form-group">
-            <label for="amount">Amount ()</label>
+            <label for="amount">Amount (৳)</label>
             <input id="amount" type="number" min="0" step="0.01" placeholder="e.g. 150" required>
           </div>
 
@@ -214,6 +228,33 @@
     </div>
   </main>
 
+  <!-- Modal for Setting/Adding Balance -->
+  <div class="modal-backdrop" id="balanceModal">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h3>Manage Balance</h3>
+        <button type="button" class="modal-close" onclick="closeBalanceModal()">&times;</button>
+      </div>
+      <form id="balanceForm">
+        <div class="form-group">
+          <label for="balanceMode">Action</label>
+          <select id="balanceMode" class="custom-modal-select">
+            <option value="set">Set Starting Balance</option>
+            <option value="add">Add / Top-Up Balance</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label for="balanceInput">Amount (৳)</label>
+          <input id="balanceInput" type="number" step="0.01" placeholder="e.g. 5000" required>
+        </div>
+        <div class="modal-actions">
+          <button type="button" class="btn secondary" onclick="closeBalanceModal()">Cancel</button>
+          <button type="submit" class="btn primary">Save Balance</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
   <footer class="footer">
     <div class="container footer-content">
       <div class="footer-brand">
@@ -249,11 +290,14 @@
     });
 
     const KEY = "personal_expense";
+    const BALANCE_KEY = "skh_starting_balance";
     const THEME_KEY = "skh_theme";
+    
     let expenses = JSON.parse(localStorage.getItem(KEY) || "[]");
+    let initialBalance = Number(localStorage.getItem(BALANCE_KEY) || 0);
     let selectedMonth = "";
-    const $ = id => document.getElementById(id);
-    $("date").value = new Date().toISOString().slice(0, 10);
+    
+    const $= id => document.getElementById(id);$("date").value = new Date().toISOString().slice(0, 10);
 
     const CATEGORIES = ["Grocery", "Food", "Transport", "Shopping", "Education", "Bills", "Entertainment", "Others"];
 
@@ -273,8 +317,11 @@
     })();
 
     function money(n) {
-      return "৳" + Number(n).toLocaleString("en-BD", { maximumFractionDigits: 2 });
+      const val = Number(n);
+      const formatted = Math.abs(val).toLocaleString("en-BD", { maximumFractionDigits: 2 });
+      return (val < 0 ? "-৳" : "৳") + formatted;
     }
+
     function formatDateDisplay(dateStr) {
       if (!dateStr) return "—";
       const [year, month, day] = dateStr.split("-");
@@ -287,6 +334,7 @@
     }
     function save() {
       localStorage.setItem(KEY, JSON.stringify(expenses));
+      localStorage.setItem(BALANCE_KEY, initialBalance);
       render();
     }
     function dayStart(d) {
@@ -310,14 +358,39 @@
       return map[cat] || 'badge-others';
     }
 
+    /* ---------- Balance Modal ---------- */
+    function openBalanceModal() {
+      $("balanceInput").value = "";
+      $("balanceModal").classList.add("open");
+    }
+    function closeBalanceModal() {
+      $("balanceModal").classList.remove("open");
+    }
+
+    $("balanceForm").onsubmit = e => {
+      e.preventDefault();
+      const mode = $("balanceMode").value;
+      const amt = Number($("balanceInput").value);
+
+      if (mode === "set") {
+        const totalSpent = expenses.reduce((s, x) => s + x.amount, 0);
+        initialBalance = amt + totalSpent;
+      } else if (mode === "add") {
+        initialBalance += amt;
+      }
+
+      save();
+      closeBalanceModal();
+    };
+
     /* ---------- Custom Select Builders ---------- */
     function buildCategoryList() {
       const listEl = $("categoryList");
       listEl.innerHTML = CATEGORIES.map(c => {
         const active = $("category").value === c ? "active" : "";
         const count = expenses.filter(x => x.category === c).length;
-        return `<div class="custom-select-item ${active}" onclick="selectCategory('${c}')">
-          <span>${c}</span>
+        return `<div class="custom-select-item ${active}" onclick="selectCategory('${escapeHtml(c)}')">
+          <span>${escapeHtml(c)}</span>
           ${active
             ? '<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><polyline points="20 6 9 17 4 12"/></svg>'
             : `<span class="custom-select-count">${count}</span>`}
@@ -345,8 +418,8 @@
       html += CATEGORIES.map(c => {
         const active = $("filter").value === c ? "active" : "";
         const count = expenses.filter(x => x.category === c).length;
-        return `<div class="custom-select-item ${active}" onclick="selectFilter('${c}')">
-          <span>${c}</span>
+        return `<div class="custom-select-item ${active}" onclick="selectFilter('${escapeHtml(c)}')">
+          <span>${escapeHtml(c)}</span>
           ${active
             ? '<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><polyline points="20 6 9 17 4 12"/></svg>'
             : `<span class="custom-select-count">${count}</span>`}
@@ -395,11 +468,11 @@
       selectMonth("");
     }
 
-        function toggleCustomSelect(e, name) {
+    function toggleCustomSelect(e, name) {
       e.stopPropagation();
       const dd = document.getElementById(name + "Dropdown");
       const wrap = dd.closest(".custom-select-wrap");
-      const panel = dd.closest(".panel"); // <--- ADD THIS
+      const panel = dd.closest(".panel");
       const isOpen = dd.classList.contains("open");
 
       closeAllCustomSelects();
@@ -411,7 +484,7 @@
 
         dd.classList.add("open");
         wrap.classList.add("open");
-        if (panel) panel.classList.add("z-top"); // <--- ADD THIS
+        if (panel) panel.classList.add("z-top");
         positionDropdown(dd);
       }
     }
@@ -440,7 +513,7 @@
         el.style.transformOrigin = "";
       });
       document.querySelectorAll(".custom-select-wrap.open").forEach(el => el.classList.remove("open"));
-      document.querySelectorAll(".panel.z-top").forEach(el => el.classList.remove("z-top")); // <--- ADD THIS
+      document.querySelectorAll(".panel.z-top").forEach(el => el.classList.remove("z-top"));
     }
 
     document.addEventListener("click", e => {
@@ -476,6 +549,17 @@
     /* ---------- Render ---------- */
     function render() {
       const sum = a => a.reduce((s, x) => s + x.amount, 0);
+      const totalSpentOverall = sum(expenses);
+      const currentBal = initialBalance - totalSpentOverall;
+
+      const balEl = $("currentBalance");
+      balEl.textContent = money(currentBal);
+      if (currentBal < 0) {
+        balEl.classList.add("negative");
+      } else {
+        balEl.classList.remove("negative");
+      }
+
       $("todayTotal").textContent = money(sum(expenses.filter(x => isToday(x.date))));
       $("weekTotal").textContent = money(sum(expenses.filter(x => isThisWeek(x.date))));
       $("monthTotal").textContent = money(sum(expenses.filter(x => isThisMonth(x.date))));
@@ -524,7 +608,7 @@
               <tr>
                 <td>${formatDateDisplay(x.date)}</td>
                 <td><strong>${escapeHtml(x.item)}</strong></td>
-                <td><span class="badge ${getBadgeClass(x.category)}">${x.category}</span></td>
+                <td><span class="badge ${getBadgeClass(x.category)}">${escapeHtml(x.category)}</span></td>
                 <td class="muted">${escapeHtml(x.place || "—")}</td>
                 <td><strong>${money(x.amount)}</strong></td>
                 <td style="text-align:right;"><button class="delete-btn" type="button" onclick="removeExpense(${x.id})">Delete</button></td>
@@ -542,7 +626,7 @@
         (rows.length ? rows.map(([c, v]) => `
           <div class="cat-row">
             <div class="cat-info">
-              <span><span class="badge ${getBadgeClass(c)}">${c}</span></span>
+              <span><span class="badge ${getBadgeClass(c)}">${escapeHtml(c)}</span></span>
               <b>${money(v)} <span class="muted">(${Math.round((v / total) * 100)}%)</span></b>
             </div>
             <div class="bar"><div class="fill" style="width:${total ? (v / total) * 100 : 0}%"></div></div>
@@ -554,7 +638,8 @@
     }
 
     function escapeHtml(s) {
-      return s.replace(/[&<>"']/g, m => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#039;" }[m]));
+      if (!s) return "";
+      return String(s).replace(/[&<>"']/g, m => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#039;" }[m]));
     }
 
     function removeExpense(id) {
