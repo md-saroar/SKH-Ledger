@@ -59,7 +59,9 @@
     --shadow-lg: 0 20px 35px -10px rgba(0, 0, 0, 0.5);
 }
 
-* {
+*,
+*::before,
+*::after {
     box-sizing: border-box;
     margin: 0;
     padding: 0;
@@ -284,7 +286,7 @@ main {
     box-shadow: 0 10px 22px rgba(0, 0, 0, 0.25);
 }
 
-/* ---------- HEADER ACTION BUTTONS (perfect circles) ---------- */
+/* Header Action Buttons */
 .theme-toggle,
 .user-btn {
     width: 42px !important;
@@ -342,7 +344,7 @@ main {
 
 .delete-btn:active { transform: scale(0.92); }
 
-/* Floating Metric Cards */
+/* Floating Metric Cards (Updated to 4 columns) */
 .cards-wrapper {
     margin-top: 5px;
     margin-bottom: 28px;
@@ -352,7 +354,7 @@ main {
 
 .cards {
     display: grid;
-    grid-template-columns: repeat(3, 1fr);
+    grid-template-columns: repeat(4, 1fr);
     gap: 16px;
 }
 
@@ -386,6 +388,34 @@ main {
     border-radius: 0 4px 4px 0;
 }
 
+/* Balance Card Accent Customizations */
+.card.balance-card::before {
+    background: #10b981;
+}
+
+.card-header-flex {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.balance-edit-btn {
+    background: rgba(79, 70, 229, 0.1);
+    color: var(--primary);
+    border: none;
+    padding: 3px 10px;
+    font-size: 11px;
+    font-weight: 700;
+    border-radius: var(--radius-pill);
+    cursor: pointer;
+    transition: var(--transition);
+}
+
+.balance-edit-btn:hover {
+    background: var(--primary);
+    color: #ffffff;
+}
+
 .card .label {
     font-size: 12px;
     font-weight: 700;
@@ -395,12 +425,17 @@ main {
 }
 
 .card .amount {
-    font-size: 30px;
+    font-size: 28px;
     font-weight: 800;
     margin-top: 6px;
     color: var(--text-main);
     letter-spacing: -1px;
     overflow-wrap: anywhere;
+    transition: color 0.3s ease;
+}
+
+.card .amount.negative {
+    color: #ef4444 !important;
 }
 
 /* Layout Grid & Panels */
@@ -471,7 +506,7 @@ label {
 }
 
 /* Inputs */
-input {
+input, select.custom-modal-select {
     width: 100%;
     padding: 12px 18px;
     border: 1.5px solid var(--border);
@@ -485,7 +520,7 @@ input {
     box-shadow: inset 0 1px 3px rgba(0, 0, 0, 0.02);
 }
 
-input:focus {
+input:focus, select.custom-modal-select:focus {
     outline: none;
     border-color: var(--primary);
     background: var(--input-bg);
@@ -558,9 +593,7 @@ input:focus {
     transform: translateY(-50%) scale(1.1);
 }
 
-/* ============================================================
-   CUSTOM SELECT — unified style for all 3 dropdowns
-   ============================================================ */
+/* Custom Select Dropdowns */
 .custom-select-wrap {
     position: relative;
     width: 100%;
@@ -571,7 +604,6 @@ input:focus {
     z-index: 999 !important;
 }
 
-/* Raise the whole panel when a dropdown is open */
 .panel:has(.custom-select-wrap.open) {
     z-index: 999 !important;
 }
@@ -626,7 +658,6 @@ input:focus {
     transform: rotate(180deg);
 }
 
-/* --- Floating dropdown --- */
 .custom-select-dropdown {
     position: absolute;
     top: calc(100% + 8px);
@@ -659,7 +690,6 @@ input:focus {
     pointer-events: auto;
 }
 
-/* --- Header bar (Filter by Month / Select Category) --- */
 .custom-select-header {
     display: flex;
     justify-content: space-between;
@@ -693,7 +723,6 @@ input:focus {
     background: rgba(79, 70, 229, 0.1);
 }
 
-/* --- Scrollable list: 3 items then scroll --- */
 .custom-select-list {
     overflow-y: auto;
     flex: 1;
@@ -759,14 +788,81 @@ input:focus {
     flex-shrink: 0;
 }
 
-/* Same 3-item limit for every dropdown */
 .custom-select-wrap[data-select="category"] .custom-select-list,
 .custom-select-wrap[data-select="filter"] .custom-select-list,
 .custom-select-wrap[data-select="month"] .custom-select-list {
     max-height: 145px !important;
 }
 
-/* ================= Filter row layout ================= */
+/* Modal Styling */
+.modal-backdrop {
+    position: fixed;
+    inset: 0;
+    background: rgba(15, 23, 42, 0.5);
+    backdrop-filter: blur(4px);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 2000;
+    opacity: 0;
+    visibility: hidden;
+    transition: var(--transition);
+}
+
+.modal-backdrop.open {
+    opacity: 1;
+    visibility: visible;
+}
+
+.modal-content {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-lg);
+    width: 100%;
+    max-width: 420px;
+    padding: 24px;
+    box-shadow: var(--shadow-lg);
+    transform: translateY(-20px);
+    transition: var(--transition);
+}
+
+.modal-backdrop.open .modal-content {
+    transform: translateY(0);
+}
+
+.modal-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 20px;
+}
+
+.modal-header h3 {
+    font-size: 18px;
+    font-weight: 700;
+}
+
+.modal-close {
+    background: none;
+    border: none;
+    font-size: 24px;
+    color: var(--text-muted);
+    cursor: pointer;
+}
+
+.modal-actions {
+    display: flex;
+    gap: 12px;
+    justify-content: flex-end;
+    margin-top: 20px;
+}
+
+.modal-actions .btn {
+    width: auto;
+    margin-top: 0;
+}
+
+/* Filter Row Layout */
 .filter-row {
     display: flex;
     gap: 12px;
@@ -812,7 +908,7 @@ input:focus {
     z-index: 1;
 }
 
-/* Month summary bar */
+/* Month Summary Bar */
 .month-summary {
     max-height: 0;
     overflow: hidden;
@@ -868,10 +964,10 @@ input:focus {
     white-space: nowrap;
 }
 
-/* ---------- Table ---------- */
+/* Table */
 .table-responsive {
-    overflow-x: auto;              /* This enables the sliding */
-    -webkit-overflow-scrolling: touch; /* Makes it smooth on iPhones */
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
     border-radius: var(--radius-lg);
     border: 1px solid var(--border);
     background: var(--surface);
@@ -882,8 +978,8 @@ input:focus {
 }
 
 table {
-    width: max-content; /* Allows the table to grow wider than the screen */
-    min-width: 100%;    /* Keeps it looking full-width on desktop */
+    width: max-content;
+    min-width: 100%;
     border-collapse: separate;
     border-spacing: 0;
     white-space: nowrap;
@@ -914,7 +1010,7 @@ tr:last-child td { border-bottom: none; }
 tr { transition: var(--transition); }
 tr:hover td { background: var(--table-row-hover); }
 
-/* ---------- Badges ---------- */
+/* Badges */
 .badge {
     display: inline-block;
     padding: 4px 12px;
@@ -943,7 +1039,7 @@ tr:hover td { background: var(--table-row-hover); }
 [data-theme="dark"] .badge-others { background: #334155; color: #cbd5e1; }
 [data-theme="dark"] .badge-grocery { background: #064e3b; color: #a7f3d0; }
 
-/* ---------- Report ---------- */
+/* Report */
 .report-total {
     font-size: 28px;
     font-weight: 800;
@@ -982,7 +1078,7 @@ tr:hover td { background: var(--table-row-hover); }
     padding: 36px 12px;
 }
 
-/* ---------- Footer ---------- */
+/* Footer */
 .footer {
     background: rgba(7, 27, 74, 0.7);
     backdrop-filter: blur(8px);
@@ -1014,7 +1110,7 @@ tr:hover td { background: var(--table-row-hover); }
 .footer-brand strong { color: #e2e8f0; }
 .copyright { font-size: 11px; color: var(--footer-text-muted); }
 
-/* ---------- User dropdown ---------- */
+/* User Dropdown */
 .user-menu-wrap {
     position: relative;
     z-index: 100;
@@ -1107,6 +1203,11 @@ tr:hover td { background: var(--table-row-hover); }
     .container { max-width: 1280px; }
 }
 
+/* Responsive - Laptop / Small Screen */
+@media (max-width: 1100px) {
+    .cards { grid-template-columns: repeat(2, 1fr); }
+}
+
 /* ==========================================================================
    RESPONSIVE — TABLET
    ========================================================================== */
@@ -1195,7 +1296,6 @@ tr:hover td { background: var(--table-row-hover); }
         min-width: 0;
     }
 
-    /* Dropdown: no override for list max-height — 3-item limit stays */
     .custom-select-dropdown {
         left: 0;
         right: 0;
