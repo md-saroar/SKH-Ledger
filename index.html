@@ -424,23 +424,25 @@
       }
     }
 
-    function positionDropdown(dd) {
-      // Reset any transform origin
-      dd.style.transformOrigin = "top center";
+    window.addEventListener("resize", () => {
+      const openDd = document.querySelector(".custom-select-dropdown.open");
+      if (openDd) positionDropdown(openDd);
+    });
 
-      // Use requestAnimationFrame to ensure DOM is updated
+    function positionDropdown(dd) {
+      dd.style.transformOrigin = "top center";
+      dd.style.top = "calc(100% + 8px)";
+      dd.style.bottom = "auto";
+
       requestAnimationFrame(() => {
         const rect = dd.getBoundingClientRect();
         const viewportHeight = window.innerHeight;
+        const safeMargin = 40;
 
-        // If dropdown extends below viewport, open upward
-        if (rect.bottom > viewportHeight - 20) {
+        if (rect.bottom > viewportHeight - safeMargin) {
           dd.style.transformOrigin = "bottom center";
           dd.style.top = "auto";
           dd.style.bottom = "calc(100% + 8px)";
-        } else {
-          dd.style.top = "calc(100% + 8px)";
-          dd.style.bottom = "auto";
         }
       });
     }
