@@ -395,10 +395,11 @@
       selectMonth("");
     }
 
-    function toggleCustomSelect(e, name) {
+        function toggleCustomSelect(e, name) {
       e.stopPropagation();
       const dd = document.getElementById(name + "Dropdown");
       const wrap = dd.closest(".custom-select-wrap");
+      const panel = dd.closest(".panel"); // <--- ADD THIS
       const isOpen = dd.classList.contains("open");
 
       closeAllCustomSelects();
@@ -410,6 +411,7 @@
 
         dd.classList.add("open");
         wrap.classList.add("open");
+        if (panel) panel.classList.add("z-top"); // <--- ADD THIS
         positionDropdown(dd);
       }
     }
@@ -438,6 +440,7 @@
         el.style.transformOrigin = "";
       });
       document.querySelectorAll(".custom-select-wrap.open").forEach(el => el.classList.remove("open"));
+      document.querySelectorAll(".panel.z-top").forEach(el => el.classList.remove("z-top")); // <--- ADD THIS
     }
 
     document.addEventListener("click", e => {
